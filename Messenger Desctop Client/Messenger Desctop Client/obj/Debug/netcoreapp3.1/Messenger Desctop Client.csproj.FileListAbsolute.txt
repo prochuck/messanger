@@ -1,0 +1,13 @@
+D:\програмки\Messenger Desctop Client\Messenger Desctop Client\bin\Debug\netcoreapp3.1\Messenger Desctop Client.exe
+D:\програмки\Messenger Desctop Client\Messenger Desctop Client\bin\Debug\netcoreapp3.1\Messenger Desctop Client.deps.json
+D:\програмки\Messenger Desctop Client\Messenger Desctop Client\bin\Debug\netcoreapp3.1\Messenger Desctop Client.runtimeconfig.json
+D:\програмки\Messenger Desctop Client\Messenger Desctop Client\bin\Debug\netcoreapp3.1\Messenger Desctop Client.runtimeconfig.dev.json
+D:\програмки\Messenger Desctop Client\Messenger Desctop Client\bin\Debug\netcoreapp3.1\Messenger Desctop Client.dll
+D:\програмки\Messenger Desctop Client\Messenger Desctop Client\bin\Debug\netcoreapp3.1\Messenger Desctop Client.pdb
+D:\програмки\Messenger Desctop Client\Messenger Desctop Client\obj\Debug\netcoreapp3.1\Messenger Desctop Client.AssemblyInfoInputs.cache
+D:\програмки\Messenger Desctop Client\Messenger Desctop Client\obj\Debug\netcoreapp3.1\Messenger Desctop Client.AssemblyInfo.cs
+D:\програмки\Messenger Desctop Client\Messenger Desctop Client\obj\Debug\netcoreapp3.1\Messenger Desctop Client.csproj.CoreCompileInputs.cache
+D:\програмки\Messenger Desctop Client\Messenger Desctop Client\obj\Debug\netcoreapp3.1\Messenger Desctop Client.dll
+D:\програмки\Messenger Desctop Client\Messenger Desctop Client\obj\Debug\netcoreapp3.1\Messenger Desctop Client.pdb
+D:\програмки\Messenger Desctop Client\Messenger Desctop Client\obj\Debug\netcoreapp3.1\Messenger Desctop Client.genruntimeconfig.cache
+D:\програмки\Messenger Desctop Client\Messenger Desctop Client\obj\Debug\netcoreapp3.1\Messenger Desctop Client.csprojAssemblyReference.cache

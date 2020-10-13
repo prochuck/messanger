@@ -1,0 +1,23 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v3.1",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v3.1": {
+      "Messenger Desctop Client/1.0.0": {
+        "runtime": {
+          "Messenger Desctop Client.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "Messenger Desctop Client/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}
