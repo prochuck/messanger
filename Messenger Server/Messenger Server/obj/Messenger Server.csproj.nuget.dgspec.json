@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "D:\\програмки\\messenger\\Messenger Server\\Messenger Server\\Messenger Server.csproj": {}
+    "D:\\програмки\\messenger\\messanger\\Messenger Server\\Messenger Server\\Messenger Server.csproj": {}
   },
   "projects": {
-    "D:\\програмки\\messenger\\Messenger Server\\Messenger Server\\Messenger Server.csproj": {
+    "D:\\програмки\\messenger\\messanger\\Messenger Server\\Messenger Server\\Messenger Server.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\програмки\\messenger\\Messenger Server\\Messenger Server\\Messenger Server.csproj",
+        "projectUniqueName": "D:\\програмки\\messenger\\messanger\\Messenger Server\\Messenger Server\\Messenger Server.csproj",
         "projectName": "Messenger Server",
-        "projectPath": "D:\\програмки\\messenger\\Messenger Server\\Messenger Server\\Messenger Server.csproj",
+        "projectPath": "D:\\програмки\\messenger\\messanger\\Messenger Server\\Messenger Server\\Messenger Server.csproj",
         "packagesPath": "C:\\Users\\hiBROTHER\\.nuget\\packages\\",
-        "outputPath": "D:\\програмки\\messenger\\Messenger Server\\Messenger Server\\obj\\",
+        "outputPath": "D:\\програмки\\messenger\\messanger\\Messenger Server\\Messenger Server\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Microsoft\\Xamarin\\NuGet\\"

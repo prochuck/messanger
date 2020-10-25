@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "D:\\програмки\\messenger\\Messenger Desctop Client\\Messenger Desctop Client\\Messenger Desctop Client.csproj": {}
+    "D:\\програмки\\messenger\\messanger\\Messenger Desctop Client\\Messenger Desctop Client\\Messenger Desctop Client.csproj": {}
   },
   "projects": {
-    "D:\\програмки\\messenger\\Messenger Desctop Client\\Messenger Desctop Client\\Messenger Desctop Client.csproj": {
+    "D:\\програмки\\messenger\\messanger\\Messenger Desctop Client\\Messenger Desctop Client\\Messenger Desctop Client.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\програмки\\messenger\\Messenger Desctop Client\\Messenger Desctop Client\\Messenger Desctop Client.csproj",
+        "projectUniqueName": "D:\\програмки\\messenger\\messanger\\Messenger Desctop Client\\Messenger Desctop Client\\Messenger Desctop Client.csproj",
         "projectName": "Messenger Desctop Client",
-        "projectPath": "D:\\програмки\\messenger\\Messenger Desctop Client\\Messenger Desctop Client\\Messenger Desctop Client.csproj",
+        "projectPath": "D:\\програмки\\messenger\\messanger\\Messenger Desctop Client\\Messenger Desctop Client\\Messenger Desctop Client.csproj",
         "packagesPath": "C:\\Users\\hiBROTHER\\.nuget\\packages\\",
-        "outputPath": "D:\\програмки\\messenger\\Messenger Desctop Client\\Messenger Desctop Client\\obj\\",
+        "outputPath": "D:\\програмки\\messenger\\messanger\\Messenger Desctop Client\\Messenger Desctop Client\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Microsoft\\Xamarin\\NuGet\\"

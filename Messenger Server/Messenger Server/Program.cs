@@ -37,6 +37,7 @@ namespace Messenger_Server_Part
             if (!File.Exists(user_data_patch))
             {
                 FileStream user_data = File.Create(user_data_patch);
+                user_data.Close();
             }
 
             try
@@ -47,8 +48,6 @@ namespace Messenger_Server_Part
                 while (true)
                 {
                     tcpClient = server.AcceptTcpClient();
-                    var a= tcpClient.GetStream();
-                    var b= tcpClient.GetStream();
                     ClientObj client = new ClientObj(tcpClient);
                     Thread tcpClientThread = new Thread(new ThreadStart(client.tcpConnection));
                     

@@ -31,7 +31,7 @@ namespace TcpClientApp
         {
 
             BinaryFormatter bFormatter = new BinaryFormatter();
-            string name;
+            string name=null;
             bool isReg;
             byte[] key;
             if (File.Exists(user_data_file_name))
@@ -41,11 +41,11 @@ namespace TcpClientApp
                 name = user.name;
                 key = user.key;
                 isReg = true;
+                file.Close();
             }
             else
             {
                 isReg = false;
-                name = Console.ReadLine();
                 key = new byte[256];
             }
             try
@@ -59,19 +59,48 @@ namespace TcpClientApp
 
                 XmlSerializer formatter = new XmlSerializer(typeof(message));
 
+                //переключатель зарегистрированности
 
                 //обмен ключами
-                stream.Write(data);
+                stream.Write(key);
                 stream.Read(data);
 
                 //отправка своего имени
+                string ans=null;
+                if (isReg)
+                {
+                    stream.Write(Encoding.UTF8.GetBytes("log"));
+                    sRead_stream(stream);
+                    stream.Write(Encoding.UTF8.GetBytes(name));
+                    ans = sRead_stream(stream);
+                    stream.Write(Encoding.UTF8.GetBytes(ans));
+                    ans = sRead_stream(stream);
+                    if (ans!= "авторизирован") throw new Exception("ошибка авторизации");
+                }
+                else
+                {
+                    while (ans!= "авторизирован")
+                    {
+                        if (ans != null) Console.WriteLine(ans);
+                        stream.Write(Encoding.UTF8.GetBytes("reg"));
+                        name = Console.ReadLine();
+                        sRead_stream(stream);
+                        stream.Write(Encoding.UTF8.GetBytes(name));
+                        ans = sRead_stream(stream);
+                    }
 
+                }
                 
-                stream.Write(Encoding.UTF8.GetBytes(name));
-                Console.WriteLine(sRead_stream(stream));
-
-
-
+                Console.WriteLine(ans);
+                if (!isReg)
+                {
+                    isReg = true;
+                    FileStream file = File.Open(user_data_file_name, FileMode.OpenOrCreate);
+                    user_data user;
+                    user.name = name;
+                    user.key = key;
+                    bFormatter.Serialize(file, user);
+                }
 
                 //создание потока вывода данных на экран
                 cw_stream np = new cw_stream(stream);
@@ -91,8 +120,6 @@ namespace TcpClientApp
                 } while (true);
 
 
-                stream.Close();
-                client.Close();
             }
             catch (SocketException e)
             {
@@ -128,6 +155,7 @@ namespace TcpClientApp
                         some_data.AddRange(buffer);
                     } while (stream.DataAvailable);
                     if (count % buffer.Length != 0) some_data.RemoveRange(count, some_data.Count - count);
+                    if (count == 0) continue;
                     MemoryStream ms = new MemoryStream(crypt.Decrypt(some_data.ToArray(), some_data.Count));
                     mail = (message)formatter.Deserialize(ms);
                     Console.WriteLine(mail.content);

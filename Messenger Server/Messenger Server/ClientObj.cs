@@ -16,6 +16,7 @@ namespace Messenger_Server_Part
             byte[] key;
             bool is_auth = false;
             NetworkStream stream = null;
+            int idList=-1;
             public ClientObj(TcpClient tcpClient)
             {
                 client = tcpClient;
@@ -39,44 +40,61 @@ namespace Messenger_Server_Part
                     stream.Write(serverKey);
 
                     //регистрация/логининг
-                    name = sRead_stream(stream);
-                    while (!is_auth)
+                    string targ = sRead_stream(stream);
+                    stream.Write(Encoding.UTF8.GetBytes("говорите"));
+                    if (targ == "reg")
                     {
-                        if (dataWR.is_registred(name))
+                        while (!is_auth)
                         {
-                            if (dataWR.get_key_by_name(name) == key) //процесс авторизации
+                            name = sRead_stream(stream);
+                            if (!dataWR.is_registred(name))
                             {
-                                string str = generate_random_str();
-                                stream.Write(crypt.Encrypt( Encoding.UTF8.GetBytes(str), serverKey));
-                                if (sRead_stream(stream) == str)
+                                if (dataWR.register_user(name, key))
                                 {
                                     is_auth = true;
                                     stream.Write(Encoding.UTF8.GetBytes("авторизирован"));
                                 }
                                 else
                                 {
-                                    stream.Write(Encoding.UTF8.GetBytes("провал авторизации"));
-                                    throw new Exception("провал");
+                                    stream.Write(Encoding.UTF8.GetBytes("логин занят"));
                                 }
-                            }
-                        }
-                        else
-                        {
-                            if (dataWR.register_user(name,key))
-                            {
-                                is_auth = true;
-                                stream.Write(Encoding.UTF8.GetBytes("зарегистрирован"));
                             }
                             else
                             {
                                 stream.Write(Encoding.UTF8.GetBytes("логин занят"));
-
                             }
                         }
                     }
+                    else if (targ == "log")
+                    {
+                        name = sRead_stream(stream);
+                        if (System.Linq.Enumerable.SequenceEqual(dataWR.get_key_by_name(name), key)) //процесс авторизации
+                        {
+                            string str = generate_random_str();
+                            stream.Write(crypt.Encrypt(Encoding.UTF8.GetBytes(str), serverKey));
+                            if (sRead_stream(stream) == str)
+                            {
+                                is_auth = true;
+                                stream.Write(Encoding.UTF8.GetBytes("авторизирован"));
+                            }
+                            else
+                            {
+                                stream.Write(Encoding.UTF8.GetBytes("провал авторизации"));
+                                throw new Exception("провал");
+                            }
+                        }
+                        else
+                        {
+                            stream.Write(Encoding.UTF8.GetBytes("провал авторизации"));
+                            throw new Exception("провал");
+                        }
+                    }
+                    else throw new Exception("no target");
+
                     user ussr;
                     ussr.name = name;
                     ussr.client = client;
+                    idList = online_list.Count;
                     online_list.Add(ussr);
                     byte[] buffer = new byte[64];
                     int count = 0;
@@ -121,6 +139,7 @@ namespace Messenger_Server_Part
 
                 finally
                 {
+                    online_list.RemoveAt(idList);
                     if (stream != null)
                         stream.Close();
                     if (client != null)
