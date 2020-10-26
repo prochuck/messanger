@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Net.Sockets;
 using System.Text;
@@ -12,6 +13,7 @@ namespace TcpClientApp
     [Serializable, XmlRoot("message")]
     public struct message
     {
+        public string from { get; set; }
         public string addresant { get; set; }
         public string content { get; set; }
     }
@@ -121,6 +123,7 @@ namespace TcpClientApp
                     message a=new message();
                     a.addresant = Console.ReadLine();
                     a.content = Console.ReadLine();
+                    a.from = name;
                     MemoryStream ms = new MemoryStream();
                     formatter.Serialize(ms, a);
                     byte[] crypted=crypt.Encrypt(ms.ToArray(), data);
@@ -166,7 +169,10 @@ namespace TcpClientApp
                     if (count == 0) continue;
                     MemoryStream ms = new MemoryStream(crypt.Decrypt(some_data.ToArray(), some_data.Count));
                     mail = (message)formatter.Deserialize(ms);
-                    Console.WriteLine(mail.content);
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.Write(mail.from);
+                    Console.ResetColor();
+                    Console.WriteLine(": "+mail.content);
                 }
             }
         }

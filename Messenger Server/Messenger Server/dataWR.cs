@@ -109,17 +109,17 @@ namespace Messenger_Server_Part
                 file.Close();
                 return true;
             }
-            static public bool save_message(string from,Message mess)
+            static public bool save_message(Message mess)
             {
-                string pattern = "(^" + from + "@" + mess.addresant + "$)|(^" + mess.addresant + "@" + from + "$)";
+                string pattern = "(^" + mess.from + "@" + mess.addresant + "$)|(^" + mess.addresant + "@" + mess.from + "$)";
                 string conv_file_path;
-                if (string.Compare(from, mess.addresant) == -1)
+                if (string.Compare(mess.from, mess.addresant) == -1)
                 {
-                    conv_file_path = Directory.GetCurrentDirectory() + @"\" + message_history_name + @"\" + from + "@" + mess.addresant + ".txt";
+                    conv_file_path = Directory.GetCurrentDirectory() + @"\" + message_history_name + @"\" + mess.from + "@" + mess.addresant + ".txt";
                 }
                 else
                 {
-                    conv_file_path = Directory.GetCurrentDirectory()+ @"\" +message_history_name + @"\" + mess.addresant + "@" +from  + ".txt";
+                    conv_file_path = Directory.GetCurrentDirectory()+ @"\" +message_history_name + @"\" + mess.addresant + "@" +mess.from  + ".txt";
                 }
                 lock (locker1)
                 {

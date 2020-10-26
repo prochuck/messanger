@@ -116,7 +116,11 @@ namespace Messenger_Server_Part
                                     ms = new MemoryStream();
                                     formatter.Serialize(ms, mail);
                                     online_list[i].client.GetStream().Write(ms.ToArray());
-                                    DataWR.save_message(name, mail);
+                                    DataWR.save_message(mail);
+                                }
+                                else
+                                {
+
                                 }
                             }
                         }

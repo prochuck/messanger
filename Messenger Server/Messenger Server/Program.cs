@@ -12,6 +12,7 @@ namespace Messenger_Server_Part
     [Serializable, XmlRoot("message")]
     public struct Message
     {
+        public string from { get; set; }
         public string addresant { get; set; }
         public string content { get; set; }
     }
