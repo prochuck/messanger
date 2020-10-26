@@ -21,7 +21,7 @@ namespace TcpClientApp
     public struct user_data
     {
         public string name  { get; set; }
-        public byte[] key { get; set; }
+        public string password { get; set; }
     }
     class Program
     {
@@ -33,21 +33,19 @@ namespace TcpClientApp
         {
             string name=null;
             bool isReg;
-            byte[] key;
+            string password;
             if (File.Exists(user_data_file_name))
             {
                 string jFileText = File.ReadAllText(user_data_file_name);
                 user_data user = JsonSerializer.Deserialize<user_data>(jFileText);
                 name = user.name;
-                key = user.key;
+                password = user.password;
                 isReg = true;
-
-
             }
             else
             {
                 isReg = false;
-                key = new byte[256];
+                password = "";
             }
             try
             {
@@ -61,10 +59,8 @@ namespace TcpClientApp
                 XmlSerializer formatter = new XmlSerializer(typeof(message));
 
                 //переключатель зарегистрированности
-
-                //обмен ключами
-                stream.Write(key);
-                stream.Read(data);
+                //isReg = false;
+                
 
                 //отправка своего имени
                 string ans=null;
@@ -73,26 +69,36 @@ namespace TcpClientApp
                     stream.Write(Encoding.UTF8.GetBytes("log"));
                     sRead_stream(stream);
                     stream.Write(Encoding.UTF8.GetBytes(name));
-                    ans = sRead_stream(stream);
-                    stream.Write(Encoding.UTF8.GetBytes(ans));
+                    sRead_stream(stream);
+                    stream.Write(Encoding.UTF8.GetBytes(password));
                     ans = sRead_stream(stream);
                     if (ans!= "авторизирован") throw new Exception("ошибка авторизации");
+                    Console.WriteLine(ans);
                 }
                 else
                 {
-                    while (ans!= "авторизирован")
+                    stream.Write(Encoding.UTF8.GetBytes("reg"));
+                    sRead_stream(stream);
+                    while (ans!= "логин доступен")
                     {
                         if (ans != null) Console.WriteLine(ans);
-                        stream.Write(Encoding.UTF8.GetBytes("reg"));
                         name = Console.ReadLine();
-                        sRead_stream(stream);
                         stream.Write(Encoding.UTF8.GetBytes(name));
                         ans = sRead_stream(stream);
                     }
-
+                    Console.WriteLine(ans);
+                    ans = null;
+                    while (ans != "пароль принят")
+                    {
+                        if (ans != null) Console.WriteLine(ans);
+                        password = Console.ReadLine();
+                        stream.Write(Encoding.UTF8.GetBytes(password));
+                        ans = sRead_stream(stream);
+                    }
+                    Console.WriteLine(ans);
                 }
                 
-                Console.WriteLine(ans);
+                
                 if (!isReg)
                 {
                     isReg = true;
@@ -100,7 +106,7 @@ namespace TcpClientApp
                     {
                         user_data user=new user_data();
                         user.name = name;
-                        user.key = key;
+                        user.password = password;
                         string a = JsonSerializer.Serialize<user_data>(user);
                         file.Write( Encoding.UTF8.GetBytes(a));
                     }

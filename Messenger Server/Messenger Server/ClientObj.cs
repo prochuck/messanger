@@ -13,7 +13,7 @@ namespace Messenger_Server_Part
         {
             public TcpClient client;
             string name;
-            byte[] key;
+            string password;
             bool is_auth = false;
             NetworkStream stream = null;
             int idList=-1;
@@ -28,64 +28,61 @@ namespace Messenger_Server_Part
                 
                 List<byte> some_data = new List<byte>();
 
-                
-                key = new byte[256];
+
+                password = "";
                 try
                 {
                     stream = client.GetStream();
-                    
 
-                    //приём ключа
-                    stream.Read(key, 0, key.Length);
-                    stream.Write(serverKey);
+
+                    
 
                     //регистрация/логининг
                     string targ = sRead_stream(stream);
-                    stream.Write(Encoding.UTF8.GetBytes("говорите"));
+                    stream.Write(Encoding.UTF8.GetBytes("get"));
                     if (targ == "reg")
                     {
                         while (!is_auth)
                         {
                             name = sRead_stream(stream);
-                            if (!dataWR.is_registred(name))
+                            if (dataWR.can_register(name))
                             {
-                                if (dataWR.register_user(name, key))
-                                {
-                                    is_auth = true;
-                                    stream.Write(Encoding.UTF8.GetBytes("авторизирован"));
-                                }
-                                else
-                                {
-                                    stream.Write(Encoding.UTF8.GetBytes("логин занят"));
-                                }
+                                is_auth = true;
+                                stream.Write(Encoding.UTF8.GetBytes("логин доступен"));
                             }
                             else
                             {
                                 stream.Write(Encoding.UTF8.GetBytes("логин занят"));
                             }
                         }
+                        is_auth = false;
+                        while (!is_auth)
+                        {
+                            password = sRead_stream(stream);
+                            if (dataWR.register_user(name, password))
+                            {
+                                is_auth = true;
+                                stream.Write(Encoding.UTF8.GetBytes("пароль принят"));
+                            }
+                            else
+                            {
+                                stream.Write(Encoding.UTF8.GetBytes("плохой пароль"));
+                            }
+                        }
                     }
                     else if (targ == "log")
                     {
                         name = sRead_stream(stream);
-                        if (System.Linq.Enumerable.SequenceEqual(dataWR.get_key_by_name(name), key)) //процесс авторизации
+                        stream.Write(Encoding.UTF8.GetBytes("get"));
+                        password = sRead_stream(stream);
+                        if (System.Linq.Enumerable.SequenceEqual(dataWR.get_password_by_name(name), password)) //процесс авторизации
                         {
-                            string str = generate_random_str();
-                            stream.Write(crypt.Encrypt(Encoding.UTF8.GetBytes(str), serverKey));
-                            if (sRead_stream(stream) == str)
-                            {
-                                is_auth = true;
-                                stream.Write(Encoding.UTF8.GetBytes("авторизирован"));
-                            }
-                            else
-                            {
-                                stream.Write(Encoding.UTF8.GetBytes("провал авторизации"));
-                                throw new Exception("провал");
-                            }
+                            is_auth = true;
+                            stream.Write(Encoding.UTF8.GetBytes("авторизирован"));
                         }
                         else
                         {
-                            stream.Write(Encoding.UTF8.GetBytes("провал авторизации"));
+                            stream.Write(Encoding.UTF8.GetBytes("неверный пароль"));
                             throw new Exception("провал");
                         }
                     }
@@ -139,7 +136,7 @@ namespace Messenger_Server_Part
 
                 finally
                 {
-                    online_list.RemoveAt(idList);
+                    if(idList!=-1) online_list.RemoveAt(idList);
                     if (stream != null)
                         stream.Close();
                     if (client != null)

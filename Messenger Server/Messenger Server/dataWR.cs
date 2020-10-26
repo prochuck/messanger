@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Text.RegularExpressions;
 using System.Threading;
 
 namespace Messenger_Server_Part
@@ -15,10 +16,14 @@ namespace Messenger_Server_Part
             {
 
                 public string name;
-                public byte[] key;
+                public string password;
             }
             const int max_name_lenght = 20;
-            const int key_lenght = 256;
+            const int min_name_lenght = 4;
+            const int pass_lenght = 20;
+            const int min_pas_len = 3;
+            const string reg_pattern = @"\b(^[a-z 0-9]*$)";
+            const RegexOptions options = RegexOptions.IgnoreCase;
             static public bool is_registred(string name)
             {
                 BinaryFormatter formatter = new BinaryFormatter();
@@ -34,7 +39,7 @@ namespace Messenger_Server_Part
                         Thread.Sleep(10);
                     }
                 }
-                if (name.Length > max_name_lenght)
+                if (name.Length > max_name_lenght|| name.Length<min_name_lenght)
                 {
                     file.Close();
                     return false;
@@ -51,7 +56,13 @@ namespace Messenger_Server_Part
                 file.Close();
                 return false;
             }
-            static public byte[] get_key_by_name(string name)
+            static public bool can_register(string name)
+            {
+                bool a = Regex.IsMatch(name, reg_pattern, options);
+                if (Regex.IsMatch(name, reg_pattern, options) && !is_registred(name) && name.Length >= min_name_lenght && name.Length <= max_name_lenght) return true;
+                return false;
+            }
+            static public string get_password_by_name(string name)
             {
                 BinaryFormatter formatter=new BinaryFormatter();
                 FileStream file = null;
@@ -73,14 +84,15 @@ namespace Messenger_Server_Part
                     else
                     {
                         file.Close();
-                        return data.key;
+                        return data.password;
                     }
                 }
 
                 return null;
             }
-            static public bool register_user(string name, byte[] key)
+            static public bool register_user(string name,string password)
             {
+                
                 BinaryFormatter formatter = new BinaryFormatter();
                 FileStream file = null;
                 while (file == null)
@@ -94,7 +106,7 @@ namespace Messenger_Server_Part
                         Thread.Sleep(10);
                     }
                 }
-                if (name.Length > max_name_lenght || key.Length != key_lenght)
+                if (!Regex.IsMatch(name, reg_pattern, options) || !Regex.IsMatch(password, reg_pattern, options) || name.Length > max_name_lenght || name.Length < min_name_lenght || password.Length > pass_lenght || pass_lenght < min_pas_len)
                 {
                     file.Close();
                     return false;
@@ -109,7 +121,7 @@ namespace Messenger_Server_Part
                     }
                 }
                 user_data data;
-                data.key = key;
+                data.password = password;
                 data.name = name;
                 formatter.Serialize(file, data);
                 file.Close();
