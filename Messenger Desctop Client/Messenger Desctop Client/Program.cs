@@ -4,6 +4,8 @@ using System.IO;
 using System.Net.Sockets;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading;
 using System.Xml.Serialization;
 
@@ -18,30 +20,29 @@ namespace TcpClientApp
     [Serializable]
     public struct user_data
     {
-
-        public string name;
-        public byte[] key;
+        public string name  { get; set; }
+        public byte[] key { get; set; }
     }
     class Program
     {
+
         private const int port = 8888;
         private const string server = "127.0.0.1";
-        const string user_data_file_name= "data.bin";
+        const string user_data_file_name= "data.json";
         static void Main(string[] args)
         {
-
-            BinaryFormatter bFormatter = new BinaryFormatter();
             string name=null;
             bool isReg;
             byte[] key;
             if (File.Exists(user_data_file_name))
             {
-                FileStream file = File.Open(user_data_file_name, FileMode.OpenOrCreate);
-                user_data user=(user_data)bFormatter.Deserialize(file);
+                string jFileText = File.ReadAllText(user_data_file_name);
+                user_data user = JsonSerializer.Deserialize<user_data>(jFileText);
                 name = user.name;
                 key = user.key;
                 isReg = true;
-                file.Close();
+
+
             }
             else
             {
@@ -95,11 +96,14 @@ namespace TcpClientApp
                 if (!isReg)
                 {
                     isReg = true;
-                    FileStream file = File.Open(user_data_file_name, FileMode.OpenOrCreate);
-                    user_data user;
-                    user.name = name;
-                    user.key = key;
-                    bFormatter.Serialize(file, user);
+                    using (FileStream file = File.Open(user_data_file_name, FileMode.OpenOrCreate,FileAccess.Write))
+                    {
+                        user_data user=new user_data();
+                        user.name = name;
+                        user.key = key;
+                        string a = JsonSerializer.Serialize<user_data>(user);
+                        file.Write( Encoding.UTF8.GetBytes(a));
+                    }
                 }
 
                 //создание потока вывода данных на экран
