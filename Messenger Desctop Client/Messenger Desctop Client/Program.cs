@@ -2,10 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Net.Sockets;
-using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using System.Threading;
 using System.Xml.Serialization;
 
@@ -26,18 +24,18 @@ namespace TcpClientApp
     class Program
     {
 
-        private const int port = 8888;
+        private const int port = 7001;
         private const string server = "127.0.0.1";
         const string user_data_file_name= "data.json";
         static void Main(string[] args)
         {
             string name=null;
-            bool isReg;
+            bool isReg; 
             string password;
             if (File.Exists(user_data_file_name))
             {
                 string jFileText = File.ReadAllText(user_data_file_name);
-                user_data user = JsonSerializer.Deserialize<user_data>(jFileText);
+                user_data user =  JsonSerializer.Deserialize<user_data>(jFileText);
                 name = user.name;
                 password = user.password;
                 isReg = true;
@@ -59,7 +57,7 @@ namespace TcpClientApp
                 XmlSerializer formatter = new XmlSerializer(typeof(message));
 
                 //переключатель зарегистрированности
-                isReg = false;
+                //isReg = false;
                 
 
                 //отправка своего имени

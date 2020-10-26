@@ -22,7 +22,7 @@ namespace Messenger_Server_Part
         const string message_history_name = @"message history";
         const string user_data_patch = "user_data.bin";
         const string log_patch = "log.txt";
-        const int port = 8888;
+        const int port = 7001;
         static byte[] serverKey = new byte[256];
         static List<ClientObj> online_list = new List<ClientObj>();
         static void Main(string[] args)
@@ -39,8 +39,7 @@ namespace Messenger_Server_Part
 
             try
             {
-                IPAddress localAddr = IPAddress.Parse("127.0.0.1");
-                server = new TcpListener(localAddr, port);
+                server = new TcpListener(IPAddress.Any, port);
                 server.Start();
                 while (true)
                 {
@@ -51,7 +50,7 @@ namespace Messenger_Server_Part
                     tcpClientThread.Start();
                 }
             }
-            catch (Exception exception)
+                catch (Exception exception)
             {
                 Console.WriteLine(exception);
                 File.AppendAllText(log_patch, exception.ToString());

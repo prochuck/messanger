@@ -12,7 +12,7 @@ namespace Messenger_Server_Part
     partial class Program
     {
         static object locker = new object();
-
+        static object locker1 = new object();
         static public class DataWR
         {
             [Serializable]
@@ -121,9 +121,9 @@ namespace Messenger_Server_Part
                 {
                     conv_file_path = Directory.GetCurrentDirectory()+ @"\" +message_history_name + @"\" + mess.addresant + "@" +from  + ".txt";
                 }
-                lock (locker)
+                lock (locker1)
                 {
-                    string a = JsonSerializer.Serialize<Message>(mess);
+                    string a =Regex.Unescape( JsonSerializer.Serialize<Message>(mess));
                     File.AppendAllText(conv_file_path, a);
                 }
                 return true;

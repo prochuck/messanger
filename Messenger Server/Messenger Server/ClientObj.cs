@@ -88,7 +88,6 @@ namespace Messenger_Server_Part
                     }
                     else throw new Exception("no target");
 
-                    
                     idList = online_list.Count;
                     online_list.Add(this);
                     byte[] buffer = new byte[64];
