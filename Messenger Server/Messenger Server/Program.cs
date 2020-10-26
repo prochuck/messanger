@@ -10,27 +10,24 @@ using System.Xml.Serialization;
 namespace Messenger_Server_Part
 {
     [Serializable, XmlRoot("message")]
-    public struct message
+    public struct Message
     {
-        public string addresant;
-        public string content;
+        public string addresant { get; set; }
+        public string content { get; set; }
     }
 
     partial class Program
     {
-        public struct user
-        {
-            public string name;
-            public TcpClient client;
-        }
+        
+        const string message_history_name = @"message history";
         const string user_data_patch = "user_data.bin";
         const string log_patch = "log.txt";
         const int port = 8888;
         static byte[] serverKey = new byte[256];
-        static List<user> online_list = new List<user>();
+        static List<ClientObj> online_list = new List<ClientObj>();
         static void Main(string[] args)
         {
-            XmlSerializer formatter = new XmlSerializer(typeof(message));
+            XmlSerializer formatter = new XmlSerializer(typeof(Message));
             serverKey[5] = 1;
             TcpClient tcpClient;
             TcpListener server = null;

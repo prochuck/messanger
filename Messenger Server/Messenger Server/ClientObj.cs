@@ -16,7 +16,7 @@ namespace Messenger_Server_Part
             string password;
             bool is_auth = false;
             NetworkStream stream = null;
-            int idList=-1;
+            public int idList=-1;
             public ClientObj(TcpClient tcpClient)
             {
                 client = tcpClient;
@@ -24,7 +24,7 @@ namespace Messenger_Server_Part
 
             public void tcpConnection()
             {
-                XmlSerializer formatter = new XmlSerializer(typeof(message));
+                XmlSerializer formatter = new XmlSerializer(typeof(Message));
                 
                 List<byte> some_data = new List<byte>();
 
@@ -45,7 +45,7 @@ namespace Messenger_Server_Part
                         while (!is_auth)
                         {
                             name = sRead_stream(stream);
-                            if (dataWR.can_register(name))
+                            if (DataWR.can_register(name))
                             {
                                 is_auth = true;
                                 stream.Write(Encoding.UTF8.GetBytes("логин доступен"));
@@ -59,7 +59,7 @@ namespace Messenger_Server_Part
                         while (!is_auth)
                         {
                             password = sRead_stream(stream);
-                            if (dataWR.register_user(name, password))
+                            if (DataWR.register_user(name, password))
                             {
                                 is_auth = true;
                                 stream.Write(Encoding.UTF8.GetBytes("пароль принят"));
@@ -75,7 +75,7 @@ namespace Messenger_Server_Part
                         name = sRead_stream(stream);
                         stream.Write(Encoding.UTF8.GetBytes("get"));
                         password = sRead_stream(stream);
-                        if (System.Linq.Enumerable.SequenceEqual(dataWR.get_password_by_name(name), password)) //процесс авторизации
+                        if (System.Linq.Enumerable.SequenceEqual(DataWR.get_password_by_name(name), password)) //процесс авторизации
                         {
                             is_auth = true;
                             stream.Write(Encoding.UTF8.GetBytes("авторизирован"));
@@ -88,17 +88,15 @@ namespace Messenger_Server_Part
                     }
                     else throw new Exception("no target");
 
-                    user ussr;
-                    ussr.name = name;
-                    ussr.client = client;
+                    
                     idList = online_list.Count;
-                    online_list.Add(ussr);
+                    online_list.Add(this);
                     byte[] buffer = new byte[64];
                     int count = 0;
                     while (true)
                     {
                         some_data = new List<byte>();
-                        message mail;
+                        Message mail;
                         count = 0;
                         // чтение сообщений
                         do
@@ -111,7 +109,7 @@ namespace Messenger_Server_Part
                         {
 
                             MemoryStream ms = new MemoryStream(crypt.Decrypt(some_data.ToArray(), some_data.Count));
-                            mail = (message)formatter.Deserialize(ms);
+                            mail = (Message)formatter.Deserialize(ms);
                             for (int i = 0; i < online_list.Count; i++)
                             {
                                 if (online_list[i].name == mail.addresant)
@@ -119,6 +117,7 @@ namespace Messenger_Server_Part
                                     ms = new MemoryStream();
                                     formatter.Serialize(ms, mail);
                                     online_list[i].client.GetStream().Write(ms.ToArray());
+                                    DataWR.save_message(name, mail);
                                 }
                             }
                         }
@@ -136,7 +135,14 @@ namespace Messenger_Server_Part
 
                 finally
                 {
-                    if(idList!=-1) online_list.RemoveAt(idList);
+                    if (idList >= 0) {
+
+                        for (int i = idList+1; i < online_list.Count; i++)
+                        {
+                            online_list[i].idList--;
+                        }
+                        online_list.RemoveAt(idList);
+                    }
                     if (stream != null)
                         stream.Close();
                     if (client != null)

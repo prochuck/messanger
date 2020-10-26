@@ -1,6 +1,8 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading;
 
@@ -9,12 +11,13 @@ namespace Messenger_Server_Part
 
     partial class Program
     {
-        static public class dataWR
+        static object locker = new object();
+
+        static public class DataWR
         {
             [Serializable]
-            struct user_data
+            struct User_data
             {
-
                 public string name;
                 public string password;
             }
@@ -22,22 +25,15 @@ namespace Messenger_Server_Part
             const int min_name_lenght = 4;
             const int pass_lenght = 20;
             const int min_pas_len = 3;
-            const string reg_pattern = @"\b(^[a-z 0-9]*$)";
+            const string reg_name_pattern = @"\b(^[a-z 0-9]*$)";
             const RegexOptions options = RegexOptions.IgnoreCase;
             static public bool is_registred(string name)
             {
                 BinaryFormatter formatter = new BinaryFormatter();
                 FileStream file = null;
-                while (file == null)
+                lock (locker)
                 {
-                    try
-                    {
-                        file = File.Open(user_data_patch, FileMode.OpenOrCreate);
-                    }
-                    catch (System.IO.IOException)
-                    {
-                        Thread.Sleep(10);
-                    }
+                    file = File.Open(user_data_patch, FileMode.OpenOrCreate);
                 }
                 if (name.Length > max_name_lenght|| name.Length<min_name_lenght)
                 {
@@ -46,7 +42,7 @@ namespace Messenger_Server_Part
                 }
                 while (file.Position < file.Length)
                 {
-                    user_data tmp = (user_data)formatter.Deserialize(file);
+                    User_data tmp = (User_data)formatter.Deserialize(file);
                     if (name == tmp.name)
                     {
                         file.Close();
@@ -58,28 +54,21 @@ namespace Messenger_Server_Part
             }
             static public bool can_register(string name)
             {
-                bool a = Regex.IsMatch(name, reg_pattern, options);
-                if (Regex.IsMatch(name, reg_pattern, options) && !is_registred(name) && name.Length >= min_name_lenght && name.Length <= max_name_lenght) return true;
+                bool a = Regex.IsMatch(name, reg_name_pattern, options);
+                if (Regex.IsMatch(name, reg_name_pattern, options) && !is_registred(name) && name.Length >= min_name_lenght && name.Length <= max_name_lenght) return true;
                 return false;
             }
             static public string get_password_by_name(string name)
             {
                 BinaryFormatter formatter=new BinaryFormatter();
                 FileStream file = null;
-                while (file == null)
+                lock (locker)
                 {
-                    try
-                    {
-                        file = File.Open(user_data_patch, FileMode.OpenOrCreate);
-                    }
-                    catch (System.IO.IOException)
-                    {
-                        Thread.Sleep(10);
-                    }
+                    file = File.Open(user_data_patch, FileMode.OpenOrCreate);
                 }
                 while (file.Position<file.Length)
                 {
-                    user_data data = (user_data)formatter.Deserialize(file);
+                    User_data data = (User_data)formatter.Deserialize(file);
                     if (name != data.name) continue;
                     else
                     {
@@ -95,38 +84,50 @@ namespace Messenger_Server_Part
                 
                 BinaryFormatter formatter = new BinaryFormatter();
                 FileStream file = null;
-                while (file == null)
+                lock (locker)
                 {
-                    try
-                    {
-                        file = File.Open(user_data_patch, FileMode.Append);
-                    }
-                    catch (System.IO.IOException)
-                    {
-                        Thread.Sleep(10);
-                    }
+                    file = File.Open(user_data_patch, FileMode.Append);
                 }
-                if (!Regex.IsMatch(name, reg_pattern, options) || !Regex.IsMatch(password, reg_pattern, options) || name.Length > max_name_lenght || name.Length < min_name_lenght || password.Length > pass_lenght || pass_lenght < min_pas_len)
+                if (!Regex.IsMatch(name, reg_name_pattern, options) || !Regex.IsMatch(password, reg_name_pattern, options) || name.Length > max_name_lenght || name.Length < min_name_lenght || password.Length > pass_lenght || pass_lenght < min_pas_len)
                 {
                     file.Close();
                     return false;
                 }
                 while(file.Position < file.Length)
                 {
-                    user_data tmp = (user_data)formatter.Deserialize(file);
+                    User_data tmp = (User_data)formatter.Deserialize(file);
                     if (name == tmp.name)
                     {
                         file.Close();
                         return false;
                     }
                 }
-                user_data data;
+                User_data data;
                 data.password = password;
                 data.name = name;
                 formatter.Serialize(file, data);
                 file.Close();
                 return true;
             }
+            static public bool save_message(string from,Message mess)
+            {
+                string pattern = "(^" + from + "@" + mess.addresant + "$)|(^" + mess.addresant + "@" + from + "$)";
+                string conv_file_path;
+                if (string.Compare(from, mess.addresant) == -1)
+                {
+                    conv_file_path = Directory.GetCurrentDirectory() + @"\" + message_history_name + @"\" + from + "@" + mess.addresant + ".txt";
+                }
+                else
+                {
+                    conv_file_path = Directory.GetCurrentDirectory()+ @"\" +message_history_name + @"\" + mess.addresant + "@" +from  + ".txt";
+                }
+                lock (locker)
+                {
+                    string a = JsonSerializer.Serialize<Message>(mess);
+                    File.AppendAllText(conv_file_path, a);
+                }
+                return true;
+            }   
         }
 
     }

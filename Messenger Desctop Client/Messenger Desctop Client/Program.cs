@@ -14,13 +14,13 @@ namespace TcpClientApp
     [Serializable, XmlRoot("message")]
     public struct message
     {
-        public string addresant;
-        public string content;
+        public string addresant { get; set; }
+        public string content { get; set; }
     }
     [Serializable]
     public struct user_data
     {
-        public string name  { get; set; }
+        public string name { get; set; }
         public string password { get; set; }
     }
     class Program
@@ -59,7 +59,7 @@ namespace TcpClientApp
                 XmlSerializer formatter = new XmlSerializer(typeof(message));
 
                 //переключатель зарегистрированности
-                //isReg = false;
+                isReg = false;
                 
 
                 //отправка своего имени
@@ -97,19 +97,19 @@ namespace TcpClientApp
                     }
                     Console.WriteLine(ans);
                 }
-                
-                
+
+
                 if (!isReg)
                 {
                     isReg = true;
-                    using (FileStream file = File.Open(user_data_file_name, FileMode.OpenOrCreate,FileAccess.Write))
-                    {
-                        user_data user=new user_data();
-                        user.name = name;
-                        user.password = password;
-                        string a = JsonSerializer.Serialize<user_data>(user);
-                        file.Write( Encoding.UTF8.GetBytes(a));
-                    }
+
+                    user_data user = new user_data();
+                    user.name = name;
+                    user.password = password;
+                    string a = JsonSerializer.Serialize<user_data>(user);
+                    File.WriteAllText(user_data_file_name, a);
+
+
                 }
 
                 //создание потока вывода данных на экран
@@ -120,7 +120,7 @@ namespace TcpClientApp
                 //отправка сообщений
                 do
                 {
-                    message a;
+                    message a=new message();
                     a.addresant = Console.ReadLine();
                     a.content = Console.ReadLine();
                     MemoryStream ms = new MemoryStream();
