@@ -115,7 +115,4 @@ ipch/
 # Visual Studio profiler
 *.psess
 *.vsp
-
-#as
-**.txt
-**.json
+*.bin
