@@ -27,7 +27,8 @@ namespace TcpClientApp
     {
 
         private const int port = 7001;
-        private const string server = "127.0.0.1";
+        //109.95.219.97
+        private const string server = "109.95.219.97";
         const string user_data_file_name= "data.json";
         static void Main(string[] args)
         {
@@ -59,7 +60,7 @@ namespace TcpClientApp
                 XmlSerializer formatter = new XmlSerializer(typeof(message));
 
                 //переключатель зарегистрированности
-                isReg = false;
+                //isReg = false;
                 
 
                 //отправка своего имени
