@@ -77,7 +77,14 @@ namespace Messenger_Server_Part
                     }
                     else if (targ == "log")
                     {
+
+                        
                         name = sRead_stream(stream);
+                        if (!DataWR.is_registred(name))
+                        {
+                            stream.Write(Encoding.UTF8.GetBytes("логин не найден"));
+                            throw new Exception("провал");
+                        }
                         lock (locker_online_list)
                         {
                             foreach (Client_Stream client in online_list)
@@ -91,6 +98,7 @@ namespace Messenger_Server_Part
                         }
                         stream.Write(Encoding.UTF8.GetBytes("доступен"));
                         password = sRead_stream(stream);
+
                         if (System.Linq.Enumerable.SequenceEqual(DataWR.get_password_by_name(name), password)) //процесс авторизации
                         {
                             is_auth = true;

@@ -181,4 +181,13 @@ System.Runtime.Serialization.SerializationException: Unable to load type Messeng
    at System.Linq.ThrowHelper.ThrowArgumentNullException(ExceptionArgument argument)
    at System.Linq.Enumerable.SequenceEqual[TSource](IEnumerable`1 first, IEnumerable`1 second, IEqualityComparer`1 comparer)
    at System.Linq.Enumerable.SequenceEqual[TSource](IEnumerable`1 first, IEnumerable`1 second)
-   at Messenger_Server_Part.Program.Client_Stream.tcpConnection() in C:\programsM\messenger\Messenger Server\Messenger Server\Client_Stream.cs:line 94
+   at Messenger_Server_Part.Program.Client_Stream.tcpConnection() in C:\programsM\messenger\Messenger Server\Messenger Server\Client_Stream.cs:line 94System.ArgumentNullException: Value cannot be null. (Parameter 'first')
+   at System.Linq.ThrowHelper.ThrowArgumentNullException(ExceptionArgument argument)
+   at System.Linq.Enumerable.SequenceEqual[TSource](IEnumerable`1 first, IEnumerable`1 second, IEqualityComparer`1 comparer)
+   at System.Linq.Enumerable.SequenceEqual[TSource](IEnumerable`1 first, IEnumerable`1 second)
+   at Messenger_Server_Part.Program.Client_Stream.tcpConnection() in C:\programsM\messenger\Messenger Server\Messenger Server\Client_Stream.cs:line 94System.ArgumentNullException: Value cannot be null. (Parameter 'first')
+   at System.Linq.ThrowHelper.ThrowArgumentNullException(ExceptionArgument argument)
+   at System.Linq.Enumerable.SequenceEqual[TSource](IEnumerable`1 first, IEnumerable`1 second, IEqualityComparer`1 comparer)
+   at System.Linq.Enumerable.SequenceEqual[TSource](IEnumerable`1 first, IEnumerable`1 second)
+   at Messenger_Server_Part.Program.Client_Stream.tcpConnection() in C:\programsM\messenger\Messenger Server\Messenger Server\Client_Stream.cs:line 94System.Exception: логин не найден
+   at Messenger_Server_Part.Program.Client_Stream.tcpConnection() in C:\programsM\messenger\Messenger Server\Messenger Server\Client_Stream.cs:line 87

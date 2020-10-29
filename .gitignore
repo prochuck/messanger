@@ -120,3 +120,4 @@ ipch/
 **.bin
 *.json
 *.json
+Messenger Desctop Client/Messenger Desctop Client/bin/Debug/netcoreapp3.1/data.json

@@ -27,7 +27,7 @@ namespace TcpClientApp
     {
 
         private const int port = 7001;
-        private const string server = "109.95.219.97";
+        private const string server = "127.0.0.1";
         const string user_data_file_name= "data.json";
         static void Main(string[] args)
         {
@@ -59,7 +59,7 @@ namespace TcpClientApp
                 XmlSerializer formatter = new XmlSerializer(typeof(message));
 
                 //переключатель зарегистрированности
-                //isReg = false;
+                isReg = false;
                 
 
                 //отправка своего имени
@@ -71,6 +71,7 @@ namespace TcpClientApp
                     stream.Write(Encoding.UTF8.GetBytes(name));
                     ans=sRead_stream(stream);
                     if (ans == "пользователь уже в сети") throw new Exception("пользователь уже в сети");
+                    else if (ans == "логин не найден") throw new Exception("логин не найден");
                     else ans = "";
                     stream.Write(Encoding.UTF8.GetBytes(password));
                     ans = sRead_stream(stream);
