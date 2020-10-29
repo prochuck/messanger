@@ -14,7 +14,9 @@
 **.user
 **.userosscache
 **.sln.docstates
-
+**.txt
+**.json
+**.bin
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
 
@@ -115,8 +117,4 @@ ipch/
 # Visual Studio profiler
 **.psess
 **.vsp
-**.bin
-
-**.txt
-**.json
 **.bin
