@@ -118,3 +118,5 @@ ipch/
 **.psess
 **.vsp
 **.bin
+*.json
+*.json
