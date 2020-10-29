@@ -169,4 +169,8 @@ System.Runtime.Serialization.SerializationException: Unable to load type Messeng
    at Messenger_Server_Part.Program.ClientObj.tcpConnection() in D:\програмки\messenger\messanger\Messenger Server\Messenger Server\ClientObj.cs:line 91System.Exception: no target
    at Messenger_Server_Part.Program.ClientObj.tcpConnection() in D:\програмки\messenger\messanger\Messenger Server\Messenger Server\ClientObj.cs:line 91System.Exception: no target
    at Messenger_Server_Part.Program.ClientObj.tcpConnection() in D:\програмки\messenger\messanger\Messenger Server\Messenger Server\ClientObj.cs:line 91System.Exception: no target
-   at Messenger_Server_Part.Program.ClientObj.tcpConnection() in D:\програмки\messenger\messanger\Messenger Server\Messenger Server\ClientObj.cs:line 91
+   at Messenger_Server_Part.Program.ClientObj.tcpConnection() in D:\програмки\messenger\messanger\Messenger Server\Messenger Server\ClientObj.cs:line 91System.Exception: провал
+   at Messenger_Server_Part.Program.Client_Stream.tcpConnection() in C:\programsM\messenger\Messenger Server\Messenger Server\Client_Stream.cs:line 85System.Exception: провал
+   at Messenger_Server_Part.Program.Client_Stream.tcpConnection() in C:\programsM\messenger\Messenger Server\Messenger Server\Client_Stream.cs:line 85System.Exception: провал
+   at Messenger_Server_Part.Program.Client_Stream.tcpConnection() in C:\programsM\messenger\Messenger Server\Messenger Server\Client_Stream.cs:line 85System.Exception: провал
+   at Messenger_Server_Part.Program.Client_Stream.tcpConnection() in C:\programsM\messenger\Messenger Server\Messenger Server\Client_Stream.cs:line 90

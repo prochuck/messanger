@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "D:\\програмки\\messenger\\messanger\\Messenger Desctop Client\\Messenger Desctop Client\\Messenger Desctop Client.csproj": {}
+    "C:\\programsM\\messenger\\Messenger Desctop Client\\Messenger Desctop Client\\Messenger Desctop Client.csproj": {}
   },
   "projects": {
-    "D:\\програмки\\messenger\\messanger\\Messenger Desctop Client\\Messenger Desctop Client\\Messenger Desctop Client.csproj": {
+    "C:\\programsM\\messenger\\Messenger Desctop Client\\Messenger Desctop Client\\Messenger Desctop Client.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\програмки\\messenger\\messanger\\Messenger Desctop Client\\Messenger Desctop Client\\Messenger Desctop Client.csproj",
+        "projectUniqueName": "C:\\programsM\\messenger\\Messenger Desctop Client\\Messenger Desctop Client\\Messenger Desctop Client.csproj",
         "projectName": "Messenger Desctop Client",
-        "projectPath": "D:\\програмки\\messenger\\messanger\\Messenger Desctop Client\\Messenger Desctop Client\\Messenger Desctop Client.csproj",
-        "packagesPath": "C:\\Users\\hiBROTHER\\.nuget\\packages\\",
-        "outputPath": "D:\\програмки\\messenger\\messanger\\Messenger Desctop Client\\Messenger Desctop Client\\obj\\",
+        "projectPath": "C:\\programsM\\messenger\\Messenger Desctop Client\\Messenger Desctop Client\\Messenger Desctop Client.csproj",
+        "packagesPath": "C:\\Users\\Andrew\\.nuget\\packages\\",
+        "outputPath": "C:\\programsM\\messenger\\Messenger Desctop Client\\Messenger Desctop Client\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Microsoft\\Xamarin\\NuGet\\"
         ],
         "configFilePaths": [
-          "C:\\Users\\hiBROTHER\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Andrew\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
         ],
@@ -56,7 +56,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.402\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.403\\RuntimeIdentifierGraph.json"
         }
       }
     }

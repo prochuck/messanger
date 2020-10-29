@@ -5,11 +5,16 @@ using System.Net.Sockets;
 using System.Text;
 using System.Xml.Serialization;
 
+
+
 namespace Messenger_Server_Part
 {
     partial class Program
     {
-        public class ClientObj
+
+
+        static object locker_online_list = new object();
+        public class Client_Stream
         {
             public TcpClient client;
             string name;
@@ -17,7 +22,7 @@ namespace Messenger_Server_Part
             bool is_auth = false;
             NetworkStream stream = null;
             public int idList=-1;
-            public ClientObj(TcpClient tcpClient)
+            public Client_Stream(TcpClient tcpClient)
             {
                 client = tcpClient;
             }
@@ -73,7 +78,18 @@ namespace Messenger_Server_Part
                     else if (targ == "log")
                     {
                         name = sRead_stream(stream);
-                        stream.Write(Encoding.UTF8.GetBytes("get"));
+                        lock (locker_online_list)
+                        {
+                            foreach (Client_Stream client in online_list)
+                            {
+                                if (client.name == name)
+                                {
+                                    stream.Write(Encoding.UTF8.GetBytes("пользователь уже в сети"));
+                                    throw new Exception("провал");
+                                }
+                            }
+                        }
+                        stream.Write(Encoding.UTF8.GetBytes("доступен"));
                         password = sRead_stream(stream);
                         if (System.Linq.Enumerable.SequenceEqual(DataWR.get_password_by_name(name), password)) //процесс авторизации
                         {
@@ -87,9 +103,11 @@ namespace Messenger_Server_Part
                         }
                     }
                     else throw new Exception("no target");
-
-                    idList = online_list.Count;
-                    online_list.Add(this);
+                    lock (locker_online_list)
+                    {
+                        idList = online_list.Count;
+                        online_list.Add(this);
+                    }
                     byte[] buffer = new byte[64];
                     int count = 0;
                     while (true)
@@ -109,18 +127,21 @@ namespace Messenger_Server_Part
 
                             MemoryStream ms = new MemoryStream(crypt.Decrypt(some_data.ToArray(), some_data.Count));
                             mail = (Message)formatter.Deserialize(ms);
-                            for (int i = 0; i < online_list.Count; i++)
+                            lock (locker_online_list)
                             {
-                                if (online_list[i].name == mail.addresant)
+                                for (int i = 0; i < online_list.Count; i++)
                                 {
-                                    ms = new MemoryStream();
-                                    formatter.Serialize(ms, mail);
-                                    online_list[i].client.GetStream().Write(ms.ToArray());
-                                    DataWR.save_message(mail);
-                                }
-                                else
-                                {
+                                    if (online_list[i].name == mail.reciever)
+                                    {
+                                        ms = new MemoryStream();
+                                        formatter.Serialize(ms, mail);
+                                        online_list[i].client.GetStream().Write(ms.ToArray());
+                                        DataWR.save_message(mail);
+                                    }
+                                    else
+                                    {
 
+                                    }
                                 }
                             }
                         }
@@ -135,16 +156,17 @@ namespace Messenger_Server_Part
                     Console.WriteLine(exception);
                     File.AppendAllText(log_patch, exception.ToString());
                 }
-
                 finally
                 {
                     if (idList >= 0) {
-
-                        for (int i = idList+1; i < online_list.Count; i++)
+                        lock (locker_online_list)
                         {
-                            online_list[i].idList--;
+                            for (int i = idList + 1; i < online_list.Count; i++)
+                            {
+                                online_list[i].idList--;
+                            }
+                            online_list.RemoveAt(idList);
                         }
-                        online_list.RemoveAt(idList);
                     }
                     if (stream != null)
                         stream.Close();

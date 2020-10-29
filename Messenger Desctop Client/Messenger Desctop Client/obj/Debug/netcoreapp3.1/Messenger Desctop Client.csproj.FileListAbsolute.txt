@@ -24,3 +24,16 @@ D:\програмки\messenger\messanger\Messenger Desctop Client\Messenger Des
 D:\програмки\messenger\messanger\Messenger Desctop Client\Messenger Desctop Client\bin\Debug\netcoreapp3.1\Messenger Desctop Client.dll
 D:\програмки\messenger\messanger\Messenger Desctop Client\Messenger Desctop Client\bin\Debug\netcoreapp3.1\Messenger Desctop Client.pdb
 D:\програмки\messenger\messanger\Messenger Desctop Client\Messenger Desctop Client\obj\Debug\netcoreapp3.1\Messenger Desctop Client.genruntimeconfig.cache
+C:\programsM\messenger\Messenger Desctop Client\Messenger Desctop Client\bin\Debug\netcoreapp3.1\Messenger Desctop Client.exe
+C:\programsM\messenger\Messenger Desctop Client\Messenger Desctop Client\bin\Debug\netcoreapp3.1\Messenger Desctop Client.deps.json
+C:\programsM\messenger\Messenger Desctop Client\Messenger Desctop Client\bin\Debug\netcoreapp3.1\Messenger Desctop Client.runtimeconfig.json
+C:\programsM\messenger\Messenger Desctop Client\Messenger Desctop Client\bin\Debug\netcoreapp3.1\Messenger Desctop Client.runtimeconfig.dev.json
+C:\programsM\messenger\Messenger Desctop Client\Messenger Desctop Client\bin\Debug\netcoreapp3.1\Messenger Desctop Client.dll
+C:\programsM\messenger\Messenger Desctop Client\Messenger Desctop Client\bin\Debug\netcoreapp3.1\Messenger Desctop Client.pdb
+C:\programsM\messenger\Messenger Desctop Client\Messenger Desctop Client\obj\Debug\netcoreapp3.1\Messenger Desctop Client.csprojAssemblyReference.cache
+C:\programsM\messenger\Messenger Desctop Client\Messenger Desctop Client\obj\Debug\netcoreapp3.1\Messenger Desctop Client.AssemblyInfoInputs.cache
+C:\programsM\messenger\Messenger Desctop Client\Messenger Desctop Client\obj\Debug\netcoreapp3.1\Messenger Desctop Client.AssemblyInfo.cs
+C:\programsM\messenger\Messenger Desctop Client\Messenger Desctop Client\obj\Debug\netcoreapp3.1\Messenger Desctop Client.csproj.CoreCompileInputs.cache
+C:\programsM\messenger\Messenger Desctop Client\Messenger Desctop Client\obj\Debug\netcoreapp3.1\Messenger Desctop Client.dll
+C:\programsM\messenger\Messenger Desctop Client\Messenger Desctop Client\obj\Debug\netcoreapp3.1\Messenger Desctop Client.pdb
+C:\programsM\messenger\Messenger Desctop Client\Messenger Desctop Client\obj\Debug\netcoreapp3.1\Messenger Desctop Client.genruntimeconfig.cache

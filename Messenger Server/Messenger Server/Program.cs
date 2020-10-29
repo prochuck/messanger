@@ -12,8 +12,8 @@ namespace Messenger_Server_Part
     [Serializable, XmlRoot("message")]
     public struct Message
     {
-        public string from { get; set; }
-        public string addresant { get; set; }
+        public string sender { get; set; }
+        public string reciever { get; set; }
         public string content { get; set; }
     }
 
@@ -25,7 +25,7 @@ namespace Messenger_Server_Part
         const string log_patch = "log.txt";
         const int port = 7001;
         static byte[] serverKey = new byte[256];
-        static List<ClientObj> online_list = new List<ClientObj>();
+        static List<Client_Stream> online_list = new List<Client_Stream>();
         static void Main(string[] args)
         {
             XmlSerializer formatter = new XmlSerializer(typeof(Message));
@@ -45,7 +45,7 @@ namespace Messenger_Server_Part
                 while (true)
                 {
                     tcpClient = server.AcceptTcpClient();
-                    ClientObj client = new ClientObj(tcpClient);
+                    Client_Stream client = new Client_Stream(tcpClient);
                     Thread tcpClientThread = new Thread(new ThreadStart(client.tcpConnection));
                     
                     tcpClientThread.Start();
