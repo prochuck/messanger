@@ -113,8 +113,9 @@ ipch/
 *.VC.VC.opendb
 
 # Visual Studio profiler
-*.psess
-*.vsp
-*.bin
+**.psess
+**.vsp
+**.bin
 Messenger Desctop Client/**/*.json
 Messenger Desctop Client/**/*.txt
+**.dll
