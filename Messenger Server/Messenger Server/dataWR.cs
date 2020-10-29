@@ -111,15 +111,15 @@ namespace Messenger_Server_Part
             }
             static public bool save_message(Message mess)
             {
-                string pattern = "(^" + mess.from + "@" + mess.addresant + "$)|(^" + mess.addresant + "@" + mess.from + "$)";
+                string pattern = "(^" + mess.sender + "@" + mess.reciever + "$)|(^" + mess.reciever + "@" + mess.sender + "$)";
                 string conv_file_path;
-                if (string.Compare(mess.from, mess.addresant) == -1)
+                if (string.Compare(mess.sender, mess.reciever) == -1)
                 {
-                    conv_file_path = Directory.GetCurrentDirectory() + @"\" + message_history_name + @"\" + mess.from + "@" + mess.addresant + ".txt";
+                    conv_file_path = Directory.GetCurrentDirectory() + @"\" + message_history_name + @"\" + mess.sender + "@" + mess.reciever + ".txt";
                 }
                 else
                 {
-                    conv_file_path = Directory.GetCurrentDirectory()+ @"\" +message_history_name + @"\" + mess.addresant + "@" +mess.from  + ".txt";
+                    conv_file_path = Directory.GetCurrentDirectory()+ @"\" +message_history_name + @"\" + mess.reciever + "@" +mess.sender  + ".txt";
                 }
                 lock (locker1)
                 {

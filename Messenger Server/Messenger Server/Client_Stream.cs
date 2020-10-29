@@ -9,7 +9,10 @@ namespace Messenger_Server_Part
 {
     partial class Program
     {
-        public class ClientObj
+
+
+        static object locker_online_list = new object();
+        public class Client_Stream
         {
             public TcpClient client;
             string name;
@@ -17,14 +20,14 @@ namespace Messenger_Server_Part
             bool is_auth = false;
             NetworkStream stream = null;
             public int idList=-1;
-            public ClientObj(TcpClient tcpClient)
+            XmlSerializer formatter = new XmlSerializer(typeof(Message));
+            public Client_Stream(TcpClient tcpClient)
             {
                 client = tcpClient;
             }
 
             public void tcpConnection()
             {
-                XmlSerializer formatter = new XmlSerializer(typeof(Message));
                 
                 List<byte> some_data = new List<byte>();
 
@@ -72,9 +75,28 @@ namespace Messenger_Server_Part
                     }
                     else if (targ == "log")
                     {
+
+                        
                         name = sRead_stream(stream);
-                        stream.Write(Encoding.UTF8.GetBytes("get"));
+                        if (!DataWR.is_registred(name))
+                        {
+                            stream.Write(Encoding.UTF8.GetBytes("логин не найден"));
+                            throw new Exception("провал");
+                        }
+                        lock (locker_online_list)
+                        {
+                            foreach (Client_Stream client in online_list)
+                            {
+                                if (client.name == name)
+                                {
+                                    stream.Write(Encoding.UTF8.GetBytes("пользователь уже в сети"));
+                                    throw new Exception("провал");
+                                }
+                            }
+                        }
+                        stream.Write(Encoding.UTF8.GetBytes("доступен"));
                         password = sRead_stream(stream);
+
                         if (System.Linq.Enumerable.SequenceEqual(DataWR.get_password_by_name(name), password)) //процесс авторизации
                         {
                             is_auth = true;
@@ -87,9 +109,11 @@ namespace Messenger_Server_Part
                         }
                     }
                     else throw new Exception("no target");
-
-                    idList = online_list.Count;
-                    online_list.Add(this);
+                    lock (locker_online_list)
+                    {
+                        idList = online_list.Count;
+                        online_list.Add(this);
+                    }
                     byte[] buffer = new byte[64];
                     int count = 0;
                     while (true)
@@ -109,18 +133,25 @@ namespace Messenger_Server_Part
 
                             MemoryStream ms = new MemoryStream(crypt.Decrypt(some_data.ToArray(), some_data.Count));
                             mail = (Message)formatter.Deserialize(ms);
-                            for (int i = 0; i < online_list.Count; i++)
+                            lock (locker_online_list)
                             {
-                                if (online_list[i].name == mail.addresant)
+                                //отправка всем пользователям
+                                if (mail.reciever=="@all")
                                 {
-                                    ms = new MemoryStream();
-                                    formatter.Serialize(ms, mail);
-                                    online_list[i].client.GetStream().Write(ms.ToArray());
-                                    DataWR.save_message(mail);
+                                    foreach (Client_Stream user in online_list)
+                                    {
+                                        Send_message(mail, user);
+                                    }
                                 }
-                                else
-                                {
 
+                                    
+                                //отправка сообщения конкретному пользователю 
+                                for (int i = 0; i < online_list.Count; i++)
+                                {
+                                    if (online_list[i].name == mail.reciever)
+                                    {
+                                        Send_message(mail, online_list[i]);
+                                    }
                                 }
                             }
                         }
@@ -135,16 +166,17 @@ namespace Messenger_Server_Part
                     Console.WriteLine(exception);
                     File.AppendAllText(log_patch, exception.ToString());
                 }
-
                 finally
                 {
                     if (idList >= 0) {
-
-                        for (int i = idList+1; i < online_list.Count; i++)
+                        lock (locker_online_list)
                         {
-                            online_list[i].idList--;
+                            for (int i = idList + 1; i < online_list.Count; i++)
+                            {
+                                online_list[i].idList--;
+                            }
+                            online_list.RemoveAt(idList);
                         }
-                        online_list.RemoveAt(idList);
                     }
                     if (stream != null)
                         stream.Close();
@@ -152,6 +184,15 @@ namespace Messenger_Server_Part
                         client.Close();
                 }
             }
+
+            private void Send_message(Message mail, Client_Stream user)
+            {
+                MemoryStream ms1 = new MemoryStream();
+                formatter.Serialize(ms1, mail);
+                user.client.GetStream().Write(ms1.ToArray());
+                DataWR.save_message(mail);
+            }
+
             string sRead_stream(NetworkStream stream) {
                 int len;
                 byte[] buffer = new byte[64];

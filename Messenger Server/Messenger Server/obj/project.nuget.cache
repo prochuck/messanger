@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "p78XfZiyFCSx6dMpcOqOLcOPjMQ3LLu74ZBbGg4x36F6odcdIL/RhSPbliJoTknAaXCaaq33o0DvOlszQHzHzg==",
+  "dgSpecHash": "kRSqGn8kViCseREJbjFKnGNGlpMUpkvicR2H5W7RC7HbsX+B1B5PHw47i02EhsObO05y3bHkd6uuGgdcI5VLfw==",
   "success": true,
-  "projectFilePath": "D:\\програмки\\messenger\\messanger\\Messenger Server\\Messenger Server\\Messenger Server.csproj",
+  "projectFilePath": "C:\\docs\\messanger\\Messenger Server\\Messenger Server\\Messenger Server.csproj",
   "expectedPackageFiles": [],
   "logs": []
 }

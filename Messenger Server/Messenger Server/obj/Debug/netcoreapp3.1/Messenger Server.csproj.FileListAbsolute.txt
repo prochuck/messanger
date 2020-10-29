@@ -24,3 +24,16 @@ D:\програмки\messenger\messanger\Messenger Server\Messenger Server\obj\
 D:\програмки\messenger\messanger\Messenger Server\Messenger Server\obj\Debug\netcoreapp3.1\Messenger Server.dll
 D:\програмки\messenger\messanger\Messenger Server\Messenger Server\obj\Debug\netcoreapp3.1\Messenger Server.pdb
 D:\програмки\messenger\messanger\Messenger Server\Messenger Server\obj\Debug\netcoreapp3.1\Messenger Server.genruntimeconfig.cache
+C:\programsM\messenger\Messenger Server\Messenger Server\bin\Debug\netcoreapp3.1\Messenger Server.exe
+C:\programsM\messenger\Messenger Server\Messenger Server\bin\Debug\netcoreapp3.1\Messenger Server.deps.json
+C:\programsM\messenger\Messenger Server\Messenger Server\bin\Debug\netcoreapp3.1\Messenger Server.runtimeconfig.json
+C:\programsM\messenger\Messenger Server\Messenger Server\bin\Debug\netcoreapp3.1\Messenger Server.runtimeconfig.dev.json
+C:\programsM\messenger\Messenger Server\Messenger Server\bin\Debug\netcoreapp3.1\Messenger Server.dll
+C:\programsM\messenger\Messenger Server\Messenger Server\bin\Debug\netcoreapp3.1\Messenger Server.pdb
+C:\programsM\messenger\Messenger Server\Messenger Server\obj\Debug\netcoreapp3.1\Messenger Server.csprojAssemblyReference.cache
+C:\programsM\messenger\Messenger Server\Messenger Server\obj\Debug\netcoreapp3.1\Messenger Server.AssemblyInfoInputs.cache
+C:\programsM\messenger\Messenger Server\Messenger Server\obj\Debug\netcoreapp3.1\Messenger Server.AssemblyInfo.cs
+C:\programsM\messenger\Messenger Server\Messenger Server\obj\Debug\netcoreapp3.1\Messenger Server.csproj.CoreCompileInputs.cache
+C:\programsM\messenger\Messenger Server\Messenger Server\obj\Debug\netcoreapp3.1\Messenger Server.dll
+C:\programsM\messenger\Messenger Server\Messenger Server\obj\Debug\netcoreapp3.1\Messenger Server.pdb
+C:\programsM\messenger\Messenger Server\Messenger Server\obj\Debug\netcoreapp3.1\Messenger Server.genruntimeconfig.cache

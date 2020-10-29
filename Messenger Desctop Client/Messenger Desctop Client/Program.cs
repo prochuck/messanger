@@ -13,8 +13,8 @@ namespace TcpClientApp
     [Serializable, XmlRoot("message")]
     public struct message
     {
-        public string from { get; set; }
-        public string addresant { get; set; }
+        public string sender { get; set; }
+        public string reciever { get; set; }
         public string content { get; set; }
     }
     [Serializable]
@@ -23,11 +23,13 @@ namespace TcpClientApp
         public string name { get; set; }
         public string password { get; set; }
     }
+
     class Program
     {
 
         private const int port = 7001;
-        private const string server = "127.0.0.1";
+        //109.95.219.97
+        private const string server = "109.95.219.97";
         const string user_data_file_name= "data.json";
         static void Main(string[] args)
         {
@@ -69,7 +71,10 @@ namespace TcpClientApp
                     stream.Write(Encoding.UTF8.GetBytes("log"));
                     sRead_stream(stream);
                     stream.Write(Encoding.UTF8.GetBytes(name));
-                    sRead_stream(stream);
+                    ans=sRead_stream(stream);
+                    if (ans == "пользователь уже в сети") throw new Exception("пользователь уже в сети");
+                    else if (ans == "логин не найден") throw new Exception("логин не найден");
+                    else ans = "";
                     stream.Write(Encoding.UTF8.GetBytes(password));
                     ans = sRead_stream(stream);
                     if (ans!= "авторизирован") throw new Exception("ошибка авторизации");
@@ -121,9 +126,9 @@ namespace TcpClientApp
                 do
                 {
                     message a=new message();
-                    a.addresant = Console.ReadLine();
+                    a.reciever = Console.ReadLine();
                     a.content = Console.ReadLine();
-                    a.from = name;
+                    a.sender = name;
                     MemoryStream ms = new MemoryStream();
                     formatter.Serialize(ms, a);
                     byte[] crypted=crypt.Encrypt(ms.ToArray(), data);
@@ -170,7 +175,7 @@ namespace TcpClientApp
                     MemoryStream ms = new MemoryStream(crypt.Decrypt(some_data.ToArray(), some_data.Count));
                     mail = (message)formatter.Deserialize(ms);
                     Console.ForegroundColor = ConsoleColor.Yellow;
-                    Console.Write(mail.from);
+                    Console.Write(mail.sender);
                     Console.ResetColor();
                     Console.WriteLine(": "+mail.content);
                 }
