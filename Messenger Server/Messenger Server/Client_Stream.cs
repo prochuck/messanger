@@ -22,6 +22,7 @@ namespace Messenger_Server_Part
             bool is_auth = false;
             NetworkStream stream = null;
             public int idList=-1;
+            XmlSerializer formatter = new XmlSerializer(typeof(Message));
             public Client_Stream(TcpClient tcpClient)
             {
                 client = tcpClient;
@@ -29,7 +30,6 @@ namespace Messenger_Server_Part
 
             public void tcpConnection()
             {
-                XmlSerializer formatter = new XmlSerializer(typeof(Message));
                 
                 List<byte> some_data = new List<byte>();
 
@@ -129,18 +129,22 @@ namespace Messenger_Server_Part
                             mail = (Message)formatter.Deserialize(ms);
                             lock (locker_online_list)
                             {
+                                //отправка всем пользователям
+                                if (mail.reciever=="@all")
+                                {
+                                    foreach (Client_Stream user in online_list)
+                                    {
+                                        Send_message(mail, user);
+                                    }
+                                }
+
+                                    
+                                //отправка сообщения конкретному пользователю 
                                 for (int i = 0; i < online_list.Count; i++)
                                 {
                                     if (online_list[i].name == mail.reciever)
                                     {
-                                        ms = new MemoryStream();
-                                        formatter.Serialize(ms, mail);
-                                        online_list[i].client.GetStream().Write(ms.ToArray());
-                                        DataWR.save_message(mail);
-                                    }
-                                    else
-                                    {
-
+                                        Send_message(mail, online_list[i]);
                                     }
                                 }
                             }
@@ -174,6 +178,15 @@ namespace Messenger_Server_Part
                         client.Close();
                 }
             }
+
+            private void Send_message(Message mail, Client_Stream user)
+            {
+                MemoryStream ms1 = new MemoryStream();
+                formatter.Serialize(ms1, mail);
+                user.client.GetStream().Write(ms1.ToArray());
+                DataWR.save_message(mail);
+            }
+
             string sRead_stream(NetworkStream stream) {
                 int len;
                 byte[] buffer = new byte[64];
