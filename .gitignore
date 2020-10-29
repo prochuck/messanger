@@ -116,6 +116,6 @@ ipch/
 **.psess
 **.vsp
 **.bin
-Messenger Desctop Client/**/*.json
+Messenger Desctop Client/**/data.json
 Messenger Desctop Client/**/*.txt
 **.dll
