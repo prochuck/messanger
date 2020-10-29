@@ -5,8 +5,6 @@ using System.Net.Sockets;
 using System.Text;
 using System.Xml.Serialization;
 
-
-
 namespace Messenger_Server_Part
 {
     partial class Program

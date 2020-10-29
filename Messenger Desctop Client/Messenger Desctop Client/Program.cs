@@ -23,6 +23,7 @@ namespace TcpClientApp
         public string name { get; set; }
         public string password { get; set; }
     }
+
     class Program
     {
 
