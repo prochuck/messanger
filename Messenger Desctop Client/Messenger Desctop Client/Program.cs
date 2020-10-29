@@ -27,7 +27,7 @@ namespace TcpClientApp
     {
 
         private const int port = 7001;
-        private const string server = "127.0.0.1";
+        private const string server = "109.95.219.97";
         const string user_data_file_name= "data.json";
         static void Main(string[] args)
         {
