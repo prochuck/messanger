@@ -39,19 +39,48 @@ namespace Messenger_Server_Part
 
 
             bool isend = false;
-            string command;
+            string command, commtext = "";
             while (!isend)
             {
-                command=Console.ReadLine();
-                switch (command)
+                command = Console.ReadLine();
+                for (int i = 0; i <= command.Length - 1; i++)
                 {
-                    //останавливает сервер
-                    case "stop":
+                    if (command[i] == ' ') break;
+                    commtext = commtext + command[i];
+                }
+                switch (commtext)
+                {
+                    case "stop": //Останавливает сервер
                         isend = true;
                         break;
+                    case "help": //Выводит доступные команды для сервера
+                        Console.WriteLine("Список доступных команд: " +
+                                          "\n1)stop - остановка сервера" +
+                                          "\n2)help - выводит все доступные команды для сервера" +
+                                          "\n3)list - показывает список подключенных пользователей" +
+                                          "\n4)mail - <mail имя_пользователя сообщение> отправка сообщения одному пользователю" +
+                                          "\n5)say - <say сообщение> отправка сообщения всем пользователям от имени сервера" +
+                                          "\n6)admin - ==");
+                        break;
+                    case "list": //Список подключенных пользователей    
+                        if (1 < online_list.Count) { Console.WriteLine("В настоящий момент онлайна нет("); break; }
+                        foreach (Client_Stream client in online_list)
+                        {
+
+                            Console.WriteLine(client.name);
+                        }
+
+                        break;
+                    case "mail": //Отправка сообщения одному пользователю                       
+                        break;
+                    case "say": //Отправка сообщения всем пользователям от имени сервера
+
+                        break;
+                    case "admin": //Присвоение прав администратора
                     default:
                         break;
                 }
+                commtext = "";
                 command = "";
             }
             
