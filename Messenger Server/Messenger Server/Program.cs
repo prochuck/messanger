@@ -60,25 +60,27 @@ namespace Messenger_Server_Part
                                           "\n3)list - показывает список подключенных пользователей" +
                                           "\n4)mail - <mail имя_пользователя сообщение> отправка сообщения одному пользователю" +
                                           "\n5)say - <say сообщение> отправка сообщения всем пользователям от имени сервера" +
-                                          "\n6)admin - ==");
+                                          "\n6)admin - ==" +
+                                          "\n7)mute <user name> - блокировка отправки сообщения для определённого пользователя");
                         break;
                     case "list": //Список подключенных пользователей    
-                        if (1 < online_list.Count) { Console.WriteLine("В настоящий момент онлайна нет("); break; }
+                        if (1 < online_list.Count) { Console.WriteLine("В настоящий момент онлайна нет =("); break; }
+                        else
                         foreach (Client_Stream client in online_list)
                         {
-
                             Console.WriteLine(client.name);
                         }
-
                         break;
                     case "mail": //Отправка сообщения одному пользователю                       
                         break;
                     case "say": //Отправка сообщения всем пользователям от имени сервера
-
                         break;
                     case "admin": //Присвоение прав администратора
                     default:
                         break;
+                    //case "mute": //выдача мута пользователю
+                    //default:
+                      //  break;
                 }
                 commtext = "";
                 command = "";

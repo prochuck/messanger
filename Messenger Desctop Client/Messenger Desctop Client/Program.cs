@@ -63,7 +63,6 @@ namespace TcpClientApp
                 //переключатель зарегистрированности
                 //isReg = false;
                 
-
                 //отправка своего имени
                 string ans=null;
                 if (isReg)

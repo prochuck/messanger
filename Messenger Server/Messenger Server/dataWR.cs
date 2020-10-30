@@ -35,7 +35,7 @@ namespace Messenger_Server_Part
                 {
                     file = File.Open(user_data_patch, FileMode.OpenOrCreate);
                 }
-                if (name.Length > max_name_lenght|| name.Length<min_name_lenght)
+                if (name.Length > max_name_lenght || name.Length < min_name_lenght)
                 {
                     file.Close();
                     return false;
@@ -123,7 +123,7 @@ namespace Messenger_Server_Part
                 }
                 lock (locker1)
                 {
-                    string a =Regex.Unescape( JsonSerializer.Serialize<Message>(mess));
+                    string a = Regex.Unescape( JsonSerializer.Serialize<Message>(mess));
                     File.AppendAllText(conv_file_path, a);
                 }
                 return true;

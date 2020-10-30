@@ -10,8 +10,6 @@ namespace Messenger_Server_Part
 {
     partial class Program
     {
-
-
         static object locker_online_list = new object();
         public class Client_Stream
         {
@@ -38,10 +36,7 @@ namespace Messenger_Server_Part
                 {
                     stream = client.GetStream();
 
-
-                    
-
-                    //регистрация/логининг
+                    //регистрация/аутентификация
                     string targ = sRead_stream(stream);
                     stream.Write(Encoding.UTF8.GetBytes("get"));
                     if (targ == "reg")
@@ -74,7 +69,7 @@ namespace Messenger_Server_Part
                             }
                         }
 
-                        Console.WriteLine("пользователь " + name + "  зарегистрирован");
+                        Console.WriteLine("Пользователь " + name + "  зарегистрирован");
                     }
                     else if (targ == "log")
                     {
@@ -84,7 +79,7 @@ namespace Messenger_Server_Part
                         if (!DataWR.is_registred(name))
                         {
                             stream.Write(Encoding.UTF8.GetBytes("логин не найден"));
-                            throw new Exception("ошибка авторизации: логин не найден для"+name);
+                            throw new Exception("ошибка авторизации: не найден логин для " + name);
                         }
                         lock (locker_online_list)
                         {
@@ -93,7 +88,7 @@ namespace Messenger_Server_Part
                                 if (client.name == name)
                                 {
                                     stream.Write(Encoding.UTF8.GetBytes("пользователь уже в сети"));
-                                    throw new Exception("ошибка авторизации: пользователь уже в сети для"+name);
+                                    throw new Exception("!!! ошибка авторизации: пользователь " + name + " уже в сети");
                                 }
                             }
                         }
@@ -108,9 +103,9 @@ namespace Messenger_Server_Part
                         else
                         {
                             stream.Write(Encoding.UTF8.GetBytes("неверный пароль"));
-                            throw new Exception("ошибка авторизации: неверный пароль для"+name);
+                            throw new Exception("ошибка авторизации: неверный пароль для "+ name);
                         }
-                        Console.WriteLine("пользователь " + name + "  вошёл в сеть");
+                        Console.WriteLine("пользователь " + name + " вошёл в сеть");
                     }
                     else throw new Exception("ошибка подключения: не указанна цель");
                     lock (locker_online_list)
@@ -164,7 +159,7 @@ namespace Messenger_Server_Part
                 catch (IOException exp)
                 {
                     if (name != "") Console.WriteLine("");
-                    else Console.WriteLine("подключение закрыто для"+name);
+                    else Console.WriteLine("подключение закрыто для " + name);
                 }
                 catch (Exception exception)
                 {
@@ -212,7 +207,7 @@ namespace Messenger_Server_Part
             }
             string generate_random_str()
             {
-                string letters = "qwertyuiopasdfghjklzxcvbnm";
+                string letters = "qwertyudfghdghjklzxcjdsbnm";
                 Random random = new Random();
                 StringBuilder sb = new StringBuilder();
                 for (int i = 0; i < random.Next(6,18); i++)
