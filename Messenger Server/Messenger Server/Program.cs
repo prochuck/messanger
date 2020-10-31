@@ -106,11 +106,10 @@ namespace Messenger_Server_Part
                                  Messenger_Server_Part.Program.Client_Stream.Send_message(mail, user);
                                  */
                             Message a = new Message();
-                            a.reciever = "talik";
+                            a.reciever =user.name;
                             a.content = commtext;
                             a.sender = "server";
-                            Messenger_Server_Part.Program.Client_Stream.Send_message(a, user);
-
+                            Client_Stream.Send_message(a, user);
                             // }
                         }
                         break;
