@@ -19,7 +19,7 @@ namespace Messenger_Server_Part
 
     partial class Program
     {
-        
+
         const string message_history_name = @"message history";
         const string user_data_patch = "user_data.bin";
         const string log_patch = "log.txt";
@@ -39,16 +39,26 @@ namespace Messenger_Server_Part
 
 
             bool isend = false;
-            string command, commtext = "";
+            string command = "", commtext;
             while (!isend)
             {
-                command = Console.ReadLine();
-                for (int i = 0; i <= command.Length - 1; i++)
+                commtext = Console.ReadLine();
+                int b = commtext.Length;
+                for (int i = 0; i <= b - 1; i++)
                 {
-                    if (command[i] == ' ') break;
-                    commtext = commtext + command[i];
+                    if (commtext[i] == ' ') break;
+                    command = command + commtext[i];
                 }
-                switch (commtext)
+                string com = commtext;
+                commtext = "";
+                bool f = false;
+                for (int i = 0; i <= b - 1; i++)
+                {
+                    if (com[i] == ' ') f = true;
+                    if (f) commtext = commtext + com[i];
+                }
+
+                switch (command)
                 {
                     case "stop": //Останавливает сервер
                         isend = true;
@@ -60,32 +70,61 @@ namespace Messenger_Server_Part
                                           "\n3)list - показывает список подключенных пользователей" +
                                           "\n4)mail - <mail имя_пользователя сообщение> отправка сообщения одному пользователю" +
                                           "\n5)say - <say сообщение> отправка сообщения всем пользователям от имени сервера" +
-                                          "\n6)admin - ==" +
+                                          "\n6)admin - <admin имя_пользователя> выдача прав администратора\n" +
                                           "\n7)mute <user name> - блокировка отправки сообщения для определённого пользователя");
                         break;
                     case "list": //Список подключенных пользователей    
-                        if (1 < online_list.Count) { Console.WriteLine("В настоящий момент онлайна нет =("); break; }
-                        else
+                        if (1 > online_list.Count) { Console.WriteLine("В настоящий момент онлайна нет =(\n"); break; }
+                        int i = 1;
                         foreach (Client_Stream client in online_list)
                         {
-                            Console.WriteLine(client.name);
+                            Console.WriteLine(i++ + ")" + client.name + "\n"); ;
                         }
+                        Console.WriteLine("\n");
                         break;
-                    case "mail": //Отправка сообщения одному пользователю                       
+                    case "mail": //Отправка сообщения одному пользователю   
+
                         break;
                     case "say": //Отправка сообщения всем пользователям от имени сервера
+                        foreach (Client_Stream user in online_list)
+                        {
+                            /*   Messenger_Server_Part.Program.Client_Stream. some_data;
+                               some_data = new List<byte>();
+                               Message mail = new Message(); ;
+                               int count = 1;
+                             Messenger_Server_Part.Program.Client_Stream stream;
+                               // чтение сообщений
+                               do
+                               {
+                                   count += stream.Read(buffer);
+                                   some_data.AddRange(buffer);
+                               } while (stream.DataAvailable);
+                               if (count % buffer.Length != 0) some_data.RemoveRange(count, some_data.Count - count);
+                               if (count != 0)
+                               {
+                                   MemoryStream ms = new MemoryStream(crypt.Decrypt(some_data.ToArray(), some_data.Count));
+                                 Messenger_Server_Part.Program.Client_Stream.Send_message(mail, user);
+                                 */
+                            Message a = new Message();
+                            a.reciever = "talik";
+                            a.content = commtext;
+                            a.sender = "server";
+                            Messenger_Server_Part.Program.Client_Stream.Send_message(a, user);
+
+                            // }
+                        }
                         break;
                     case "admin": //Присвоение прав администратора
+                        break;
+                    case "mute": //выдача мута пользователю
+                        break;
                     default:
                         break;
-                    //case "mute": //выдача мута пользователю
-                    //default:
-                      //  break;
                 }
                 commtext = "";
                 command = "";
             }
-            
+
         }
 
         private static void Server_Thread()
