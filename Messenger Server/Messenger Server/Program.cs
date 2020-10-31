@@ -32,6 +32,10 @@ namespace Messenger_Server_Part
                 FileStream user_data = File.Create(user_data_patch);
                 user_data.Close();
             }
+            if(!Directory.Exists(Directory.GetCurrentDirectory() + @"\" + message_history_name))
+            {
+                Directory.CreateDirectory(Directory.GetCurrentDirectory() + @"\" + message_history_name);
+            }
             Thread sThread = new Thread(Server_Thread);
             sThread.Name = "Server Thread";
             sThread.IsBackground = true;

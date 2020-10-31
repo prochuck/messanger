@@ -25,7 +25,7 @@ namespace Messenger_Server_Part
             const int min_name_lenght = 4;
             const int pass_lenght = 20;
             const int min_pas_len = 3;
-            const string reg_name_pattern = @"\b(^[a-z 0-9]*$)";
+            const string reg_name_pattern = @"\b(^[a-z0-9]*$)";
             const RegexOptions options = RegexOptions.IgnoreCase;
             static public bool is_registred(string name)
             {

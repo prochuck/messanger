@@ -74,7 +74,7 @@ namespace Messenger_Server_Part
                     else if (targ == "log")
                     {
 
-                        
+
                         name = sRead_stream(stream);
                         if (!DataWR.is_registred(name))
                         {
@@ -103,7 +103,7 @@ namespace Messenger_Server_Part
                         else
                         {
                             stream.Write(Encoding.UTF8.GetBytes("неверный пароль"));
-                            throw new Exception("ошибка авторизации: неверный пароль для "+ name);
+                            throw new Exception("ошибка авторизации: неверный пароль для " + name);
                         }
                         Console.WriteLine("пользователь " + name + " вошёл в сеть");
                     }
@@ -115,46 +115,58 @@ namespace Messenger_Server_Part
                     }
                     byte[] buffer = new byte[64];
                     int count = 0;
+                    string command = "";
                     while (true)
                     {
                         some_data = new List<byte>();
                         Message mail;
                         count = 0;
-                        // чтение сообщений
-                        do
-                        {
-                            count += stream.Read(buffer);
-                            some_data.AddRange(buffer);
-                        } while (stream.DataAvailable);
-                        if (count % buffer.Length != 0) some_data.RemoveRange(count, some_data.Count - count);
-                        if (count != 0)
+                        // чтение команды
+                        command = sRead_stream(stream);
+                        switch (command)
                         {
 
-                            MemoryStream ms = new MemoryStream(crypt.Decrypt(some_data.ToArray(), some_data.Count));
-                            mail = (Message)formatter.Deserialize(ms);
-                            lock (locker_online_list)
-                            {
-                                //отправка всем пользователям
-                                if (mail.reciever=="@all")
-                                {
-                                    foreach (Client_Stream user in online_list)
-                                    {
-                                        Send_message(mail, user);
-                                    }
-                                }
+                            case "send":
+                                #region
 
-                                    
-                                //отправка сообщения конкретному пользователю 
-                                for (int i = 0; i < online_list.Count; i++)
+                                //функция для чтения mail
+                                do
                                 {
-                                    if (online_list[i].name == mail.reciever)
+                                    count += stream.Read(buffer);
+                                    some_data.AddRange(buffer);
+                                } while (stream.DataAvailable);
+                                if (count % buffer.Length != 0) some_data.RemoveRange(count, some_data.Count - count);
+                                MemoryStream ms = new MemoryStream(crypt.Decrypt(some_data.ToArray(), some_data.Count));
+                                mail = (Message)formatter.Deserialize(ms);
+                                lock (locker_online_list)
+                                {
+                                    //отправка всем пользователям
+                                    if (mail.reciever == "@all")
                                     {
-                                        Send_message(mail, online_list[i]);
+                                        foreach (Client_Stream user in online_list)
+                                        {
+                                            Send_message(mail, user);
+                                        }
+                                    }
+
+
+                                    //отправка сообщения конкретному пользователю 
+                                    for (int i = 0; i < online_list.Count; i++)
+                                    {
+                                        if (online_list[i].name == mail.reciever)
+                                        {
+                                            Send_message(mail, online_list[i]);
+                                        }
                                     }
                                 }
-                            }
+                                #endregion
+                                break;
+                            default:
+                                break;
                         }
+
                     }
+
                 }
                 catch (IOException exp)
                 {
@@ -168,7 +180,8 @@ namespace Messenger_Server_Part
                 }
                 finally
                 {
-                    if (idList >= 0) {
+                    if (idList >= 0)
+                    {
                         lock (locker_online_list)
                         {
                             for (int i = idList + 1; i < online_list.Count; i++)
@@ -193,7 +206,7 @@ namespace Messenger_Server_Part
                 DataWR.save_message(mail);
             }
 
-            string sRead_stream(NetworkStream stream) {
+            static string sRead_stream(NetworkStream stream) {
                 int len;
                 byte[] buffer = new byte[64];
                 StringBuilder builder = new StringBuilder();

@@ -3,13 +3,16 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Net.Sockets;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Xml.Serialization;
 
 namespace TcpClientApp
 {
+
     [Serializable, XmlRoot("message")]
     public struct message
     {
@@ -26,14 +29,14 @@ namespace TcpClientApp
 
     class Program
     {
-
         private const int port = 7001;
         //109.95.219.97
-        private const string server = "109.95.219.97";
+        private const string server = "127.0.0.1";
         const string user_data_file_name= "data.json";
+        static string name;
         static void Main(string[] args)
         {
-            string name=null;
+            name=null;
             bool isReg; 
             string password;
             if (File.Exists(user_data_file_name))
@@ -54,11 +57,10 @@ namespace TcpClientApp
 
                 TcpClient client = new TcpClient();
                 client.Connect(server, port);
-                byte[] data = new byte[256];
                 StringBuilder response = new StringBuilder();
                 NetworkStream stream = client.GetStream();
 
-                XmlSerializer formatter = new XmlSerializer(typeof(message));
+                
 
                 //переключатель зарегистрированности
                 //isReg = false;
@@ -121,17 +123,45 @@ namespace TcpClientApp
                 Thread potok_vivoda = new Thread(new ThreadStart(np.Vivod));
                 potok_vivoda.Start();
 
+
+                
+                //список команд:
+                //send <получатель> <сообщение> - отправляет сообщение
+                //GS <отправитель> - получает всю историю переписки
+                //GM <отправитель> - получает все не полученные сообщения (сейчас бесполезна, но в когда будет граф. инт. будет иметь смысл
+                string input,command="";
+                
+                
+
                 //отправка сообщений
                 do
                 {
-                    message a=new message();
-                    a.reciever = Console.ReadLine();
-                    a.content = Console.ReadLine();
-                    a.sender = name;
-                    MemoryStream ms = new MemoryStream();
-                    formatter.Serialize(ms, a);
-                    byte[] crypted=crypt.Encrypt(ms.ToArray(), data);
-                    stream.Write(crypted);
+                    string comand_pattern = @"^[\w]+";
+                    input = Console.ReadLine();
+                    command = Regex.Match(input, comand_pattern).Value;
+                    switch (command)
+                    {
+                        case "send":
+                            #region
+                            string send_pattern = @" ([a-z0-9]+) (.+)";
+                            GroupCollection groups = Regex.Match(input, send_pattern).Groups;
+                            if (groups.Count==3)
+                            {
+                                stream.Write(Encoding.UTF8.GetBytes("send"));
+                                Send_Message(groups[1].Value,groups[2].Value, stream);
+                            }
+                            else
+                            {
+                                Console.WriteLine("неправильный формат команды");
+                            }
+                            #endregion
+                            break;
+                        default:
+                            Console.WriteLine("Команда не найдена");
+                            break;
+                    }
+                    command = "";
+                    input = "";
                 } while (true);
 
 
@@ -146,6 +176,18 @@ namespace TcpClientApp
             }
 
             Console.WriteLine("Запрос завершен...");
+        }
+
+        private static void Send_Message(string reciver,string content,NetworkStream stream)
+        {
+            XmlSerializer formatter = new XmlSerializer(typeof(message));
+            message a = new message();
+            a.reciever = reciver;
+            a.content = content;
+            a.sender = name;
+            MemoryStream ms = new MemoryStream();
+            formatter.Serialize(ms, a);
+            stream.Write(ms.ToArray());
         }
 
         public class cw_stream
