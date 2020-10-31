@@ -113,7 +113,7 @@ namespace Messenger_Server_Part
                             a.reciever =user.name;
                             a.content = commtext;
                             a.sender = "server";
-                            Client_Stream.Send_message(a, user);
+                            Client_Stream.Send_message(a, user,false);
                             // }
                         }
                         break;

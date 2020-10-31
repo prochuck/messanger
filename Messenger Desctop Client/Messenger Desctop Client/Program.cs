@@ -26,9 +26,9 @@ namespace TcpClientApp
         public string name { get; set; }
         public string password { get; set; }
     }
-
     class Program
     {
+
         private const int port = 7001;
         //109.95.219.97
         private const string server = "127.0.0.1";
@@ -36,6 +36,7 @@ namespace TcpClientApp
         static string name;
         static void Main(string[] args)
         {
+
             name=null;
             bool isReg; 
             string password;
@@ -124,37 +125,60 @@ namespace TcpClientApp
                 potok_vivoda.Start();
 
 
-                
+                //формат команды для сервера: comand <данные для этой команды>
                 //список команд:
                 //send <получатель> <сообщение> - отправляет сообщение
-                //GS <отправитель> - получает всю историю переписки
-                //GM <отправитель> - получает все не полученные сообщения (сейчас бесполезна, но в когда будет граф. инт. будет иметь смысл
+                //GetStory <отправитель> - получает всю историю переписки
+                //GetMessage <отправитель> - получает все не полученные сообщения (сейчас бесполезна, но в когда будет граф. инт. будет иметь смысл
+                
                 string input,command="";
                 
                 
 
-                //отправка сообщений
+                //отправка данных
                 do
                 {
                     string comand_pattern = @"^[\w]+";
                     input = Console.ReadLine();
                     command = Regex.Match(input, comand_pattern).Value;
+                    GroupCollection groups;
                     switch (command)
                     {
                         case "send":
                             #region
                             string send_pattern = @" ([a-z0-9]+) (.+)";
-                            GroupCollection groups = Regex.Match(input, send_pattern).Groups;
+                            groups = Regex.Match(input, send_pattern).Groups;
                             if (groups.Count==3)
                             {
-                                stream.Write(Encoding.UTF8.GetBytes("send"));
-                                Send_Message(groups[1].Value,groups[2].Value, stream);
+                                message a = new message();
+                                a.reciever = groups[1].Value;
+                                a.content = groups[2].Value;
+                                a.sender = name;
+                                string ms=JsonSerializer.Serialize<message>(a);
+                                stream.Write(Encoding.UTF8.GetBytes("send " + ms));
                             }
                             else
                             {
                                 Console.WriteLine("неправильный формат команды");
                             }
                             #endregion
+                            break;
+                        case "GetStory":
+                            #region
+                            string GetStory_pattern = @" ([a-z0-9]+)";
+                            groups = Regex.Match(input, GetStory_pattern).Groups;
+                            if (groups.Count!=1)
+                            {
+                                stream.Write(Encoding.UTF8.GetBytes("GetStory "+ groups[0].Value));
+                            }
+                            else
+                            {
+                                Console.WriteLine("неправильный формат команды");
+                            }
+                            #endregion
+                            break;
+                        case "GetMessage":  
+
                             break;
                         default:
                             Console.WriteLine("Команда не найдена");
@@ -178,17 +202,7 @@ namespace TcpClientApp
             Console.WriteLine("Запрос завершен...");
         }
 
-        private static void Send_Message(string reciver,string content,NetworkStream stream)
-        {
-            XmlSerializer formatter = new XmlSerializer(typeof(message));
-            message a = new message();
-            a.reciever = reciver;
-            a.content = content;
-            a.sender = name;
-            MemoryStream ms = new MemoryStream();
-            formatter.Serialize(ms, a);
-            stream.Write(ms.ToArray());
-        }
+       
 
         public class cw_stream
         {
@@ -221,6 +235,7 @@ namespace TcpClientApp
                         Console.Write(mail.sender);
                         Console.ResetColor();
                         Console.WriteLine(": " + mail.content);
+                        stream.Write(Encoding.UTF8.GetBytes("get"));
                     }
                 }
                 catch (Exception ex)

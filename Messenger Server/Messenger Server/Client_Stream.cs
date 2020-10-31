@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net.Sockets;
 using System.Text;
+using System.Text.Json;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Xml.Serialization;
 
@@ -115,29 +117,34 @@ namespace Messenger_Server_Part
                     }
                     byte[] buffer = new byte[64];
                     int count = 0;
-                    string command = "";
+                    string command,input = "";
+
                     while (true)
                     {
-                        some_data = new List<byte>();
+                        string command_pattern = @"(^[A-z0-9]+ )";
+                        command = "";
+                        input = "";
                         Message mail;
                         count = 0;
                         // чтение команды
-                        command = sRead_stream(stream);
+                        input = sRead_stream(stream);
+                        if (input.Length==0)
+                        {
+                            continue;
+                        }
+                        command = Regex.Match(input, command_pattern).Value.Trim();
+                        if (command.Length+1<input.Length)
+                        {
+                            input = input.Substring(command.Length+1);
+                        }
+
                         switch (command)
                         {
-
                             case "send":
-                                #region
-
+                                #region 
                                 //функция для чтения mail
-                                do
-                                {
-                                    count += stream.Read(buffer);
-                                    some_data.AddRange(buffer);
-                                } while (stream.DataAvailable);
-                                if (count % buffer.Length != 0) some_data.RemoveRange(count, some_data.Count - count);
-                                MemoryStream ms = new MemoryStream(crypt.Decrypt(some_data.ToArray(), some_data.Count));
-                                mail = (Message)formatter.Deserialize(ms);
+
+                                mail = JsonSerializer.Deserialize<Message>(input);
                                 lock (locker_online_list)
                                 {
                                     //отправка всем пользователям
@@ -145,7 +152,7 @@ namespace Messenger_Server_Part
                                     {
                                         foreach (Client_Stream user in online_list)
                                         {
-                                            Send_message(mail, user);
+                                            Send_message(mail, user,false);
                                         }
                                     }
 
@@ -155,10 +162,27 @@ namespace Messenger_Server_Part
                                     {
                                         if (online_list[i].name == mail.reciever)
                                         {
-                                            Send_message(mail, online_list[i]);
+                                            Send_message(mail, online_list[i],true);
                                         }
                                     }
                                 }
+                                #endregion 
+                                break;
+                            case "GetStory":
+                                #region
+                                input = input.Trim();
+                                DataWR.Message_worker message_Worker = new DataWR.Message_worker(name,input);
+                                Message ms = message_Worker.Next();
+                                while (ms.sender!=null)
+                                {
+                                    Send_message(ms, this,false);
+                                    ms = message_Worker.Next();
+                                }
+                                #endregion
+                                break;
+                            case "GetMessage":
+                                #region
+
                                 #endregion
                                 break;
                             default:
@@ -198,12 +222,13 @@ namespace Messenger_Server_Part
                 }
             }
 
-            static public void Send_message(Message mail, Client_Stream user)
+            static public void Send_message(Message mail, Client_Stream user,bool bSave_to_story)
             {
                 MemoryStream ms1 = new MemoryStream();
                 formatter.Serialize(ms1, mail);
                 user.client.GetStream().Write(ms1.ToArray());
-                DataWR.save_message(mail);
+                sRead_stream(user.stream);
+                if (bSave_to_story)  DataWR.save_message(mail);
             }
 
             static string sRead_stream(NetworkStream stream) {
@@ -218,6 +243,7 @@ namespace Messenger_Server_Part
                 } while (stream.DataAvailable);
                 return builder.ToString();
             }
+
             string generate_random_str()
             {
                 string letters = "qwertyudfghdghjklzxcjdsbnm";
