@@ -21,7 +21,6 @@ namespace Messenger_Server_Part
             bool is_auth = false;
             NetworkStream stream = null;
             public int idList=-1;
-            static private XmlSerializer formatter = new XmlSerializer(typeof(Message));
             public Client_Stream(TcpClient tcpClient)
             {
                 client = tcpClient;
@@ -155,8 +154,6 @@ namespace Messenger_Server_Part
                                             Send_message(mail, user,false);
                                         }
                                     }
-
-
                                     //отправка сообщения конкретному пользователю 
                                     for (int i = 0; i < online_list.Count; i++)
                                     {
@@ -171,13 +168,17 @@ namespace Messenger_Server_Part
                             case "GetStory":
                                 #region
                                 input = input.Trim();
-                                DataWR.Message_worker message_Worker = new DataWR.Message_worker(name,input);
+
+                                //наверное это хороший способ? надо спросить кого0нибудь кто гарит...
+                                FileStream fileStream=null;
+                                DataWR.Message_worker message_Worker = new DataWR.Message_worker(name,input, out fileStream);
                                 Message ms = message_Worker.Next();
                                 while (ms.sender!=null)
                                 {
                                     Send_message(ms, this,false);
                                     ms = message_Worker.Next();
                                 }
+                                fileStream.Close();
                                 #endregion
                                 break;
                             case "GetMessage":
@@ -194,7 +195,7 @@ namespace Messenger_Server_Part
                 }
                 catch (IOException exp)
                 {
-                    if (name != "") Console.WriteLine("");
+                    if (name != "")     Console.WriteLine("");
                     else Console.WriteLine("подключение закрыто для " + name);
                 }
                 catch (Exception exception)
@@ -224,10 +225,9 @@ namespace Messenger_Server_Part
 
             static public void Send_message(Message mail, Client_Stream user,bool bSave_to_story)
             {
-                MemoryStream ms1 = new MemoryStream();
-                formatter.Serialize(ms1, mail);
-                user.client.GetStream().Write(ms1.ToArray());
-                sRead_stream(user.stream);
+                
+                string mess=JsonSerializer.Serialize<Message>(mail)+"\n";
+                user.stream.Write(Encoding.UTF8.GetBytes(mess));
                 if (bSave_to_story)  DataWR.save_message(mail);
             }
 

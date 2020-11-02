@@ -142,18 +142,19 @@ namespace Messenger_Server_Part
                     }
                 } while (!is_readed);
                 return true;
-            }   
+            }
 
 
             //штука которая имеет всю историю сообщений и отдаёт по 1 по запросу
+            
             public class Message_worker
             {
                 string conv_file_path;
-                FileStream fs;
                 StreamReader sr;
                 public Message_worker() { }
-                public Message_worker(string name1,string name2)
+                public Message_worker(string name1, string name2,out FileStream fs)
                 {
+                    fs = null;
                     if (string.Compare(name1, name2) == -1)
                     {
                         conv_file_path = Directory.GetCurrentDirectory() + @"\" + message_history_name + @"\" + name1 + "@" + name2 + ".txt";
@@ -180,7 +181,6 @@ namespace Messenger_Server_Part
                 ~Message_worker()
                 {
                     sr.Close();
-                    fs.Close();
                 }
                 public Message Next()
                 {
@@ -189,7 +189,6 @@ namespace Messenger_Server_Part
                         Message message = new Message();
                         message.sender = null;
                         sr.Close();
-                        fs.Close();
                         return message;
                     }
                     string text = sr.ReadLine();

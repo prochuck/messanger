@@ -10,6 +10,9 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Xml.Serialization;
 
+// важно: нельзя отправлять на сервер \n
+
+
 namespace TcpClientApp
 {
 
@@ -213,34 +216,46 @@ namespace TcpClientApp
             }
             public void Vivod()
             {
-                try
+                //Вооообщем, вся эта конструкция нужна на случай, если много сообщение приёдйт одовременно.
+                //Теперь любое сообщение кончается на \n.
+                //В случае если системаа прочитала сразу 2 сообщения за раз, она сначала обработает 1, а второе сохранит в tmp
+                //и прочитает его при следующем проходе. Как-то так. Это лучшее, что я смог придумать.
+                string tmp=""; // переносит символы, не относящиеся к текущему сообщение в следующие сообщение.
+                message mail;
+                string jMail=" ";
+                while (true)
                 {
-                    XmlSerializer formatter = new XmlSerializer(typeof(message));
-                    while (true)
+                    try
                     {
-                        List<byte> some_data = new List<byte>();
-                        byte[] buffer = new byte[64];
-                        message mail;
-                        int count = 0;
-                        do
+
+                        if (tmp.Length == 0)
                         {
-                            count += stream.Read(buffer);
-                            some_data.AddRange(buffer);
-                        } while (stream.DataAvailable);
-                        if (count % buffer.Length != 0) some_data.RemoveRange(count, some_data.Count - count);
-                        if (count == 0) continue;
-                        MemoryStream ms = new MemoryStream(crypt.Decrypt(some_data.ToArray(), some_data.Count));
-                        mail = (message)formatter.Deserialize(ms);
+                            jMail = sRead_stream(stream);
+                        }
+                        else if (tmp.EndsWith("\n"))
+                        {
+                            jMail = tmp;
+                        }
+                        else
+                        {
+                            jMail =tmp+ sRead_stream(stream);
+                        }
+                        if (jMail.Contains("\n"))
+                        {
+                            tmp = jMail.Substring(jMail.IndexOf("\n")+1);
+                            jMail = jMail.Substring(0, jMail.IndexOf("\n"));
+                        }
+
+                        mail = JsonSerializer.Deserialize<message>(jMail);
                         Console.ForegroundColor = ConsoleColor.Yellow;
                         Console.Write(mail.sender);
                         Console.ResetColor();
                         Console.WriteLine(": " + mail.content);
-                        stream.Write(Encoding.UTF8.GetBytes("get"));
                     }
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine(ex);
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex);
+                    }
                 }
             }
         }
