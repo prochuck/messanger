@@ -3,24 +3,24 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net.Sockets;
 using System.Text;
+using System.Text.Json;
+using System.Text.RegularExpressions;
+using System.Threading;
 using System.Xml.Serialization;
 
 namespace Messenger_Server_Part
 {
     partial class Program
     {
-
-
         static object locker_online_list = new object();
         public class Client_Stream
         {
             public TcpClient client;
-            string name;
+            public string name{get;private set;}
             string password;
             bool is_auth = false;
             NetworkStream stream = null;
             public int idList=-1;
-            XmlSerializer formatter = new XmlSerializer(typeof(Message));
             public Client_Stream(TcpClient tcpClient)
             {
                 client = tcpClient;
@@ -37,10 +37,7 @@ namespace Messenger_Server_Part
                 {
                     stream = client.GetStream();
 
-
-                    
-
-                    //регистрация/логининг
+                    //регистрация/аутентификация
                     string targ = sRead_stream(stream);
                     stream.Write(Encoding.UTF8.GetBytes("get"));
                     if (targ == "reg")
@@ -72,16 +69,18 @@ namespace Messenger_Server_Part
                                 stream.Write(Encoding.UTF8.GetBytes("плохой пароль"));
                             }
                         }
+
+                        Console.WriteLine("Пользователь " + name + "  зарегистрирован");
                     }
                     else if (targ == "log")
                     {
 
-                        
+
                         name = sRead_stream(stream);
                         if (!DataWR.is_registred(name))
                         {
                             stream.Write(Encoding.UTF8.GetBytes("логин не найден"));
-                            throw new Exception("провал");
+                            throw new Exception("ошибка авторизации: не найден логин для " + name);
                         }
                         lock (locker_online_list)
                         {
@@ -90,7 +89,7 @@ namespace Messenger_Server_Part
                                 if (client.name == name)
                                 {
                                     stream.Write(Encoding.UTF8.GetBytes("пользователь уже в сети"));
-                                    throw new Exception("провал");
+                                    throw new Exception("!!! ошибка авторизации: пользователь " + name + " уже в сети");
                                 }
                             }
                         }
@@ -105,10 +104,11 @@ namespace Messenger_Server_Part
                         else
                         {
                             stream.Write(Encoding.UTF8.GetBytes("неверный пароль"));
-                            throw new Exception("провал");
+                            throw new Exception("ошибка авторизации: неверный пароль для " + name);
                         }
+                        Console.WriteLine("пользователь " + name + " вошёл в сеть");
                     }
-                    else throw new Exception("no target");
+                    else throw new Exception("ошибка подключения: не указанна цель");
                     lock (locker_online_list)
                     {
                         idList = online_list.Count;
@@ -116,50 +116,87 @@ namespace Messenger_Server_Part
                     }
                     byte[] buffer = new byte[64];
                     int count = 0;
+                    string command,input = "";
+
                     while (true)
                     {
-                        some_data = new List<byte>();
+                        string command_pattern = @"(^[A-z0-9]+ )";
+                        command = "";
+                        input = "";
                         Message mail;
                         count = 0;
-                        // чтение сообщений
-                        do
+                        // чтение команды
+                        input = sRead_stream(stream);
+                        if (input.Length==0)
                         {
-                            count += stream.Read(buffer);
-                            some_data.AddRange(buffer);
-                        } while (stream.DataAvailable);
-                        if (count % buffer.Length != 0) some_data.RemoveRange(count, some_data.Count - count);
-                        if (count != 0)
-                        {
-
-                            MemoryStream ms = new MemoryStream(crypt.Decrypt(some_data.ToArray(), some_data.Count));
-                            mail = (Message)formatter.Deserialize(ms);
-                            lock (locker_online_list)
-                            {
-                                //отправка всем пользователям
-                                if (mail.reciever=="@all")
-                                {
-                                    foreach (Client_Stream user in online_list)
-                                    {
-                                        Send_message(mail, user);
-                                    }
-                                }
-
-                                    
-                                //отправка сообщения конкретному пользователю 
-                                for (int i = 0; i < online_list.Count; i++)
-                                {
-                                    if (online_list[i].name == mail.reciever)
-                                    {
-                                        Send_message(mail, online_list[i]);
-                                    }
-                                }
-                            }
+                            continue;
                         }
+                        command = Regex.Match(input, command_pattern).Value.Trim();
+                        if (command.Length+1<input.Length)
+                        {
+                            input = input.Substring(command.Length+1);
+                        }
+
+                        switch (command)
+                        {
+                            case "send":
+                                #region 
+                                //функция для чтения mail
+
+                                mail = JsonSerializer.Deserialize<Message>(input);
+                                lock (locker_online_list)
+                                {
+                                    //отправка всем пользователям
+                                    if (mail.reciever == "@all")
+                                    {
+                                        foreach (Client_Stream user in online_list)
+                                        {
+                                            Send_message(mail, user,false);
+                                        }
+                                    }
+                                    //отправка сообщения конкретному пользователю 
+                                    for (int i = 0; i < online_list.Count; i++)
+                                    {
+                                        if (online_list[i].name == mail.reciever)
+                                        {
+                                            Send_message(mail, online_list[i],true);
+                                        }
+                                    }
+                                }
+                                #endregion 
+                                break;
+                            case "GetStory":
+                                #region
+                                input = input.Trim();
+
+                                //наверное это хороший способ? надо спросить кого0нибудь кто гарит...
+                                FileStream fileStream=null;
+                                DataWR.Message_worker message_Worker = new DataWR.Message_worker(name,input, out fileStream);
+                                Message ms = message_Worker.Next();
+                                while (ms.sender!=null)
+                                {
+                                    Send_message(ms, this,false);
+                                    ms = message_Worker.Next();
+                                }
+                                fileStream.Close();
+                                #endregion
+                                break;
+                            case "GetMessage":
+                                #region
+
+                                #endregion
+                                break;
+                            default:
+                                break;
+                        }
+
                     }
+
                 }
                 catch (IOException exp)
                 {
-                    Console.WriteLine("подключение закрыто");
+                    if (name != "")     Console.WriteLine("");
+                    else Console.WriteLine("подключение закрыто для " + name);
                 }
                 catch (Exception exception)
                 {
@@ -168,7 +205,8 @@ namespace Messenger_Server_Part
                 }
                 finally
                 {
-                    if (idList >= 0) {
+                    if (idList >= 0)
+                    {
                         lock (locker_online_list)
                         {
                             for (int i = idList + 1; i < online_list.Count; i++)
@@ -185,15 +223,15 @@ namespace Messenger_Server_Part
                 }
             }
 
-            private void Send_message(Message mail, Client_Stream user)
+            static public void Send_message(Message mail, Client_Stream user,bool bSave_to_story)
             {
-                MemoryStream ms1 = new MemoryStream();
-                formatter.Serialize(ms1, mail);
-                user.client.GetStream().Write(ms1.ToArray());
-                DataWR.save_message(mail);
+                
+                string mess=JsonSerializer.Serialize<Message>(mail)+"\n";
+                user.stream.Write(Encoding.UTF8.GetBytes(mess));
+                if (bSave_to_story)  DataWR.save_message(mail);
             }
 
-            string sRead_stream(NetworkStream stream) {
+            static string sRead_stream(NetworkStream stream) {
                 int len;
                 byte[] buffer = new byte[64];
                 StringBuilder builder = new StringBuilder();
@@ -205,9 +243,10 @@ namespace Messenger_Server_Part
                 } while (stream.DataAvailable);
                 return builder.ToString();
             }
+
             string generate_random_str()
             {
-                string letters = "qwertyuiopasdfghjklzxcvbnm";
+                string letters = "qwertyudfghdghjklzxcjdsbnm";
                 Random random = new Random();
                 StringBuilder sb = new StringBuilder();
                 for (int i = 0; i < random.Next(6,18); i++)
