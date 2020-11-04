@@ -12,6 +12,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
+using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -24,7 +25,7 @@ namespace WpfApp1
     /// </summary>
     public partial class MainWindow : Window
     {
-        
+
         NetworkStream stream;
         public MainWindow()
         {
@@ -223,7 +224,7 @@ namespace WpfApp1
 
         static string sRead_stream(NetworkStream stream)
         {
-            
+
             int len;
             byte[] buffer = new byte[64];
             StringBuilder builder = new StringBuilder();
@@ -290,6 +291,12 @@ namespace WpfApp1
                     Console.WriteLine("Команда не найдена");
                     break;
             }
+        }
+
+        private void button_Click(object sender, RoutedEventArgs e)
+        {
+            Window1 taskWindow = new Window1();
+            this.Content = taskWindow.Content;
         }
     }
 }
