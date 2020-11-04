@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Net.Mime;
 using System.Net.Sockets;
 using System.Text;
 using System.Text.Json;
@@ -74,8 +75,6 @@ namespace Messenger_Server_Part
                     }
                     else if (targ == "log")
                     {
-
-
                         name = sRead_stream(stream);
                         if (!DataWR.is_registred(name))
                         {
@@ -109,6 +108,9 @@ namespace Messenger_Server_Part
                         Console.WriteLine("пользователь " + name + " вошёл в сеть");
                     }
                     else throw new Exception("ошибка подключения: не указанна цель");
+
+
+
                     lock (locker_online_list)
                     {
                         idList = online_list.Count;
@@ -120,6 +122,7 @@ namespace Messenger_Server_Part
 
                     while (true)
                     {
+
                         string command_pattern = @"(^[A-z0-9]+ )";
                         command = "";
                         input = "";
@@ -129,6 +132,15 @@ namespace Messenger_Server_Part
                         input = sRead_stream(stream);
                         if (input.Length==0)
                         {
+                            Message message = new Message();
+                            message.content = "alive";
+                            message.sender = "@server";
+                            message.reciever = name;
+                            Send_message(message, this, false);
+                            if (!(sRead_stream(stream) == "alive"))
+                            {
+                                throw new Exception("разыв соедениения для пользователя " + name);
+                            }
                             continue;
                         }
                         command = Regex.Match(input, command_pattern).Value.Trim();
@@ -215,8 +227,7 @@ namespace Messenger_Server_Part
                 }
                 catch (IOException exp)
                 {
-                    if (name != "")     Console.WriteLine("");
-                    else Console.WriteLine("подключение закрыто для " + name);
+                    
                 }
                 catch (Exception exception)
                 {
@@ -225,6 +236,7 @@ namespace Messenger_Server_Part
                 }
                 finally
                 {
+                    if (name != "") Console.WriteLine("подключение закрыто для " + name);
                     if (idList >= 0)
                     {
                         lock (locker_online_list)

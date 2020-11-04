@@ -51,7 +51,7 @@ namespace Messenger_Server_Part
             string command = "", commtext;
             while (!isend)
             {
-                commtext = Console.ReadLine();
+                    commtext = Console.ReadLine();
                 int b = commtext.Length;
                 for (int i = 0; i <= b - 1; i++)
                 {
