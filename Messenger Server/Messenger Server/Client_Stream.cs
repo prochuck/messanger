@@ -142,26 +142,36 @@ namespace Messenger_Server_Part
                             case "send":
                                 #region 
                                 //функция для чтения mail
-
+                                bool is_sended = false;
                                 mail = JsonSerializer.Deserialize<Message>(input);
                                 lock (locker_online_list)
                                 {
                                     //отправка всем пользователям
                                     if (mail.reciever == "@all")
                                     {
+                                        is_sended = true;
                                         foreach (Client_Stream user in online_list)
                                         {
                                             Send_message(mail, user,false);
                                         }
+                                        break;
                                     }
                                     //отправка сообщения конкретному пользователю 
                                     for (int i = 0; i < online_list.Count; i++)
                                     {
+                                        
                                         if (online_list[i].name == mail.reciever)
                                         {
+                                            is_sended = true;
                                             Send_message(mail, online_list[i],true);
+                                            break;
                                         }
                                     }
+                                }
+
+                                if (!is_sended&&DataWR.is_registred(mail.reciever))
+                                {
+                                    DataWR.save_message_to_mailbox(mail);
                                 }
                                 #endregion 
                                 break;
@@ -181,9 +191,19 @@ namespace Messenger_Server_Part
                                 fileStream.Close();
                                 #endregion
                                 break;
-                            case "GetMessage":
+                            case "GetMailbox":
                                 #region
-
+                                input = input.Trim();
+                                fileStream = null;
+                                message_Worker = new DataWR.Message_worker(input, out fileStream);
+                                ms = message_Worker.Next();
+                                while (ms.sender != null)
+                                {
+                                    Send_message(ms, this, true);
+                                    ms = message_Worker.Next();
+                                }
+                                
+                                fileStream.Close();
                                 #endregion
                                 break;
                             default:

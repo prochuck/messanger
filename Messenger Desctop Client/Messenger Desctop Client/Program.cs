@@ -147,6 +147,7 @@ namespace TcpClientApp
                     GroupCollection groups;
                     switch (command)
                     {
+
                         case "send":
                             #region
                             string send_pattern = @" ([a-z0-9]+) (.+)";
@@ -180,8 +181,15 @@ namespace TcpClientApp
                             }
                             #endregion
                             break;
-                        case "GetMessage":  
-
+                        case "GetMailbox":
+                            if (input.Length != 0)
+                            {
+                                stream.Write(Encoding.UTF8.GetBytes("GetMailbox " + name));
+                            }
+                            else
+                            {
+                                Console.WriteLine("неправильный формат команды");
+                            }
                             break;
                         default:
                             Console.WriteLine("Команда не найдена");

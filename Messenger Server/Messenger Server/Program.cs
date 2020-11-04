@@ -19,14 +19,15 @@ namespace Messenger_Server_Part
 
     partial class Program
     {
-
+        const string mailbox_name = @"mailbox";
         const string message_history_name = @"message history";
-        const string user_data_patch = "user_data.bin";
-        const string log_patch = "log.txt";
+        const string user_data_patch = @"user_data.bin";
+        const string log_patch = @"log.txt";
         const int port = 7001;
         static List<Client_Stream> online_list = new List<Client_Stream>();
         static void Main(string[] args)
         {
+
             if (!File.Exists(user_data_patch))
             {
                 FileStream user_data = File.Create(user_data_patch);
@@ -35,6 +36,10 @@ namespace Messenger_Server_Part
             if(!Directory.Exists(Directory.GetCurrentDirectory() + @"\" + message_history_name))
             {
                 Directory.CreateDirectory(Directory.GetCurrentDirectory() + @"\" + message_history_name);
+            }
+            if (!Directory.Exists(Directory.GetCurrentDirectory() + @"\" + mailbox_name))
+            {
+                Directory.CreateDirectory(Directory.GetCurrentDirectory() + @"\" + mailbox_name);
             }
             Thread sThread = new Thread(Server_Thread);
             sThread.Name = "Server Thread";

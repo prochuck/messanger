@@ -111,20 +111,43 @@ namespace Messenger_Server_Part
                 return true;
             }
 
+            static public bool save_message_to_mailbox(Message mess)
+            {
+
+                //string pattern = "(^" + mess.sender + "@" + mess.reciever + "$)|(^" + mess.reciever + "@" + mess.sender + "$)";
+                string conv_file_path;
+
+
+                conv_file_path = Directory.GetCurrentDirectory() + @"\" + mailbox_name + @"\" + mess.reciever + ".txt";
+                bool is_readed = false;
+                string a = Regex.Unescape(JsonSerializer.Serialize<Message>(mess)) + "\n";
+                do
+                {
+                    try
+                    {
+                        File.AppendAllText(conv_file_path, a);
+                        is_readed = true;
+                    }
+                    catch (Exception)
+                    {
+                        Thread.Sleep(200);
+                    }
+                } while (!is_readed);
+                return true;
+            }
+
             static public bool save_message(Message mess)
             {
-                string lock_key;
-                string pattern = "(^" + mess.sender + "@" + mess.reciever + "$)|(^" + mess.reciever + "@" + mess.sender + "$)";
+               
+                //string pattern = "(^" + mess.sender + "@" + mess.reciever + "$)|(^" + mess.reciever + "@" + mess.sender + "$)";
                 string conv_file_path;
                 if (string.Compare(mess.sender, mess.reciever) == -1)
                 {
 
-                    lock_key = mess.reciever + "@" + mess.sender;
                     conv_file_path = Directory.GetCurrentDirectory() + @"\" + message_history_name + @"\" + mess.sender + "@" + mess.reciever + ".txt";
                 }
                 else
                 {
-                    lock_key = mess.reciever + "@" + mess.sender;
                     conv_file_path = Directory.GetCurrentDirectory()+ @"\" +message_history_name + @"\" + mess.reciever + "@" +mess.sender  + ".txt";
                 }
                 bool is_readed = false;
@@ -145,15 +168,42 @@ namespace Messenger_Server_Part
             }
 
 
+
             //штука которая имеет всю историю сообщений и отдаёт по 1 по запросу
-            
             public class Message_worker
             {
                 string conv_file_path;
                 StreamReader sr;
+                bool is_mailbox;
                 public Message_worker() { }
+                /// <summary>
+                /// Перегружен для работы с mailbox. Читает все сообщения, отправленные пользователю, пока тот был не в сети.
+                /// </summary>
+                /// <param name="name1"></param>
+                /// <param name="fs"></param>
+                public Message_worker(string name1, out FileStream fs)     
+                {
+                    is_mailbox = true;
+                    fs = null;
+                    conv_file_path = Directory.GetCurrentDirectory() + @"\" + mailbox_name + @"\" + name1 + ".txt";
+                    bool is_readed = false;
+                    do
+                    {
+                        try
+                        {
+                            fs = new FileStream(conv_file_path, FileMode.OpenOrCreate);
+                            sr = new StreamReader(fs);
+                            is_readed = true;
+                        }
+                        catch (Exception)
+                        {
+                            Thread.Sleep(200);
+                        }
+                    } while (!is_readed);
+                }
                 public Message_worker(string name1, string name2,out FileStream fs)
                 {
+                    is_mailbox = false;
                     fs = null;
                     if (string.Compare(name1, name2) == -1)
                     {
@@ -189,6 +239,11 @@ namespace Messenger_Server_Part
                         Message message = new Message();
                         message.sender = null;
                         sr.Close();
+                        sr.BaseStream.Close();
+                        if (is_mailbox)
+                        {
+                            File.Delete(conv_file_path);
+                        }
                         return message;
                     }
                     string text = sr.ReadLine();
