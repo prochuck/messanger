@@ -1,4 +1,4 @@
-﻿<Window x:Class="WpfApp1.MainWindow"
+﻿<Window x:Class="messanger_ui.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -16,7 +16,6 @@
         <ListBox x:Name="user_list" HorizontalAlignment="Left" Height="399" VerticalAlignment="Top" Width="141" Margin="10,10,0,0" />
         <ListBox x:Name="messages_list" HorizontalAlignment="Left" Height="348" Margin="156,10,0,0" VerticalAlignment="Top" Width="626" IsSynchronizedWithCurrentItem="True" AllowDrop="True"  Grid.ColumnSpan="2" Focusable="False"/>
         <TextBox x:Name="input_box" HorizontalAlignment="Left" Height="45" Margin="156,363,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="626" Grid.ColumnSpan="2" TextInput="input_box_TextInput"/>
-        <Button x:Name="button" Click="button_Click" Content="Button" HorizontalAlignment="Left" Margin="372,129,0,0" VerticalAlignment="Top" Width="75"/>
 
     </Grid>
 </Window>

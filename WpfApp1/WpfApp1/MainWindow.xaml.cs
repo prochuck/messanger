@@ -18,7 +18,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-namespace WpfApp1
+namespace messanger_ui
 {
     /// <summary>
     /// Логика взаимодействия для MainWindow.xaml
@@ -30,7 +30,6 @@ namespace WpfApp1
         public MainWindow()
         {
             InitializeComponent();
-
         }
         [Serializable]
         public struct Message
@@ -291,12 +290,6 @@ namespace WpfApp1
                     Console.WriteLine("Команда не найдена");
                     break;
             }
-        }
-
-        private void button_Click(object sender, RoutedEventArgs e)
-        {
-            Window1 taskWindow = new Window1();
-            this.Content = taskWindow.Content;
         }
     }
 }

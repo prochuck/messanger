@@ -1,4 +1,4 @@
-﻿namespace WpfApp1
+﻿namespace messanger_ui
 {
     public partial class MainWindow
     {
