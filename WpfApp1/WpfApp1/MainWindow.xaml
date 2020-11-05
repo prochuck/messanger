@@ -3,18 +3,15 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:WpfApp1"
+        xmlns:local="clr-namespace:messanger_ui"
         mc:Ignorable="d"
         Closed="w1_Closed"
-        Loaded="Window_Loaded"
+        
+        Initialized="w1_instantiated"
         Name="w1"
         Title="MainWindow" Height="450" Width="800">
     <Grid x:Name="main_grid">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="89*"/>
-            <ColumnDefinition Width="43*"/>
-        </Grid.ColumnDefinitions>
-        <ListBox x:Name="user_list" HorizontalAlignment="Left" Height="399" VerticalAlignment="Top" Width="141" Margin="10,10,0,0" />
+        <ListBox x:Name="user_list" HorizontalAlignment="Left" Height="399" VerticalAlignment="Top" Width="141" Margin="10,10,0,0"  SelectionChanged="user_list_SelectionChanged"/>
         <ListBox x:Name="messages_list" HorizontalAlignment="Left" Height="348" Margin="156,10,0,0" VerticalAlignment="Top" Width="626" IsSynchronizedWithCurrentItem="True" AllowDrop="True"  Grid.ColumnSpan="2" Focusable="False"/>
         <TextBox x:Name="input_box" HorizontalAlignment="Left" Height="45" Margin="156,363,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="626" Grid.ColumnSpan="2" TextInput="input_box_TextInput"/>
 
