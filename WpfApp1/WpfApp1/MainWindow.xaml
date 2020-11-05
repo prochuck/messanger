@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WpfApp1"
         mc:Ignorable="d"
+        Closed="w1_Closed"
         Loaded="Window_Loaded"
         Name="w1"
         Title="MainWindow" Height="450" Width="800">

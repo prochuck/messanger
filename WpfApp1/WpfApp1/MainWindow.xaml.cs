@@ -291,5 +291,10 @@ namespace messanger_ui
                     break;
             }
         }
+
+        private void w1_Closed(object sender, EventArgs e)
+        {
+            Environment.Exit(0);
+        }
     }
 }
