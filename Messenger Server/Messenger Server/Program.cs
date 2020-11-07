@@ -5,9 +5,11 @@ using System.Net;
 using System.Net.Sockets;
 using System.Security.Cryptography;
 using System.Threading;
+using System.Xml.Serialization;
 
 namespace Messenger_Server_Part
 {
+    [Serializable, XmlRoot("message")]
     public struct Message
     {
         public string sender { get; set; }
