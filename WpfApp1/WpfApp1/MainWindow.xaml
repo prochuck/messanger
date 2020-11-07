@@ -5,8 +5,6 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:messanger_ui"
         mc:Ignorable="d"
-        Closed="w1_Closed"
-        
         Initialized="w1_instantiated"
         Name="w1"
         Title="MainWindow" Height="450" Width="800">

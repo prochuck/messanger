@@ -149,14 +149,17 @@ namespace messanger_ui
                 }
 
                 //создание потока вывода данных на экран
-                MainWindow taskWindow = new MainWindow();
 
+
+
+                MainWindow taskWindow = new MainWindow();
 
                 cw_stream np = new cw_stream(stream, taskWindow);
                 Thread potok_vivoda = new Thread(new ThreadStart(np.Vivod));
                 potok_vivoda.IsBackground = true;
                 potok_vivoda.Name = "Input_Thread";
                 potok_vivoda.Start();
+
                 this.Content = taskWindow.Content;
                 #region
 
@@ -240,12 +243,9 @@ namespace messanger_ui
             {
                 Console.WriteLine(ex.Message);
             }
-
-
-
-
-
         }
+
+
         private void Button_Click1(object sender, RoutedEventArgs e) { }
         public string GetPassword()
         {
@@ -284,6 +284,11 @@ namespace messanger_ui
                 builder.Append(Encoding.UTF8.GetString(buffer, 0, len));
             } while (stream.DataAvailable);
             return builder.ToString();
+        }
+
+        private void Window_Closed(object sender, EventArgs e)
+        {
+            Environment.Exit(0);
         }
     }
 }

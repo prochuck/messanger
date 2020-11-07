@@ -120,10 +120,7 @@ namespace messanger_ui
             #endregion
         }
 
-        private void w1_Closed(object sender, EventArgs e)
-        {
-            Environment.Exit(0);
-        }
+
         
         private void user_list_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {

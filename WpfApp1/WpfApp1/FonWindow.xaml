@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:messanger_ui"
         mc:Ignorable="d"
+        Closed="Window_Closed"
         Loaded="Window_Loaded"
         Title="FonWindow" Height="1080" Width="1920">
     <Grid>
