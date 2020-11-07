@@ -8,15 +8,12 @@ using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading;
-using System.Xml.Serialization;
 
 // важно: нельзя отправлять на сервер \n
 
 
 namespace TcpClientApp
 {
-
-    [Serializable, XmlRoot("message")]
     public struct message
     {
         public string sender { get; set; }
@@ -39,7 +36,6 @@ namespace TcpClientApp
         static string name;
         static void Main(string[] args)
         {
-
             name=null;
             bool isReg; 
             string password;
@@ -58,13 +54,10 @@ namespace TcpClientApp
             }
             try
             {
-
                 TcpClient client = new TcpClient();
                 client.Connect(server, port);
                 StringBuilder response = new StringBuilder();
                 NetworkStream stream = client.GetStream();
-
-                
 
                 //переключатель зарегистрированности
                 //isReg = false;
@@ -108,18 +101,14 @@ namespace TcpClientApp
                     Console.WriteLine(ans);
                 }
 
-
                 if (!isReg)
                 {
                     isReg = true;
-
                     user_data user = new user_data();
                     user.name = name;
                     user.password = password;
                     string a = JsonSerializer.Serialize<user_data>(user);
                     File.WriteAllText(user_data_file_name, a);
-
-
                 }
 
                 //создание потока вывода данных на экран
@@ -135,8 +124,6 @@ namespace TcpClientApp
                 //GetMessage <отправитель> - получает все не полученные сообщения (сейчас бесполезна, но в когда будет граф. инт. будет иметь смысл
                 
                 string input,command="";
-                
-                
 
                 //отправка данных
                 do
@@ -266,7 +253,6 @@ namespace TcpClientApp
         }
         static string sRead_stream(NetworkStream stream)
         {
-            
             int len;
             byte[] buffer = new byte[64];
             StringBuilder builder = new StringBuilder();
