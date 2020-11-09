@@ -157,77 +157,79 @@ namespace messanger_ui
             }
         }
         private void Button_Click1(object sender, RoutedEventArgs e)
+        {
+            TcpClient client = new TcpClient();  // подключаемся к серверу
+            try
             {
-                TcpClient client = new TcpClient();  // подключаемся к серверу
                 client.Connect(server, port);
 
                 NetworkStream stream = client.GetStream();
 
-                string LoginR = LoginRegist.Text;
-                string ParolR = GetPassword();
+                string sLogin = LoginRegist.Text;
+                string sParol = ParolRegist.Password;
+                string sServer_response;
 
-                String rLoginR = LoginR;
-                String rParolR = ParolR;
-
-                byte[] outLoginR = System.Text.Encoding.UTF8.GetBytes(rLoginR);
-                byte[] outParolR = System.Text.Encoding.UTF8.GetBytes(rParolR);
-                stream.Write(outLoginR, 0, outLoginR.Length);        // отправляем логин на сервер
+                byte[] outLoginR = System.Text.Encoding.UTF8.GetBytes(sLogin);
+                byte[] outParolR = System.Text.Encoding.UTF8.GetBytes(sParol);
                 byte[] OtvetLR = new byte[256];
-                int bytes = stream.Read(OtvetLR, 0, OtvetLR.Length); // получаем ответ о возможности такого логина
-                string mOtvetLR = Encoding.UTF8.GetString(OtvetLR, 0, bytes);
-                if (!String.IsNullOrEmpty(rLoginR))   // проверяем заполнение логина
+
+                stream.Write(Encoding.UTF8.GetBytes("reg"), 0, Encoding.UTF8.GetBytes("reg").Length);
+                sRead_stream(stream);
+
+
+
+                if (!String.IsNullOrEmpty(sLogin))   // проверяем заполнение логина
                 {
                     Podskazka1.Visibility = Visibility.Collapsed;
+                    stream.Write(outLoginR, 0, outLoginR.Length);        // отправляем логин на сервер
+                    sServer_response = sRead_stream(stream); // получаем ответ о возможности такого логина
+                   
 
-                    if (!String.IsNullOrEmpty(rParolR))   // проверяем заполнение пароля
+                    if (sServer_response != "логин доступен")
                     {
-                        Podskazka2.Visibility = Visibility.Collapsed;
-
-                        if (mOtvetLR == "1")
-                        {
-                            stream.Write(outParolR, 0, outLoginR.Length);    // отправляем пароль на сервер
-                            byte[] OtvetPR = new byte[256];
-                            bytes = stream.Read(OtvetLR, 0, OtvetLR.Length); // получаем ответ о возможности такого логина
-                            string mOtvetPR = Encoding.UTF8.GetString(OtvetLR, 0, bytes);
-                            if (mOtvetPR == "1") // если пароль проходит открываем окно чата
-                            {
-                                MainWindow task1Window = new MainWindow();
-                                this.Content = task1Window.Content;
-                            }
-                            else if (mOtvetPR == "2") // если нет - выволдим сообщение об ошибки
-                            {
-                                TextBlock Podskazka2 = new TextBlock();
-                                Podskazka2.Text = "Пароль уже занят, попробуйте другой";
-                                Podskazka2.Foreground = Brushes.Red;
-                                Podskazka2.Visibility = Visibility.Visible;
-
-                            }
-                        }
-                        else
-                        {
-                            TextBlock Podskazka2 = new TextBlock();
-                            Podskazka2.Text = "Введите пароль";
-                            Podskazka2.Foreground = Brushes.Red;
-                            Podskazka2.Visibility = Visibility.Visible;
-                        }
-                    }
-                    else if (mOtvetLR == "2")
-                    {
-                        TextBlock Podskazka1 = new TextBlock();
-                        Podskazka1.Text = "Логин уже занят, попробуйте другой";
+                        Podskazka1.Text = sServer_response;
                         Podskazka1.Foreground = Brushes.Red;
                         Podskazka1.Visibility = Visibility.Visible;
+                        return;
                     }
-
-
+                    if (!String.IsNullOrEmpty(sParol))   // проверяем заполнение пароля
+                    {
+                        Podskazka2.Visibility = Visibility.Collapsed;
+                        stream.Write(outParolR, 0, outParolR.Length);    // отправляем пароль на сервер
+                        byte[] OtvetPR = new byte[256];
+                        sServer_response = sRead_stream(stream); // получаем ответ о возможности такого пароля
+                        if (sServer_response != "пароль принят") // если пароль проходит открываем окно чата
+                        {
+                            TextBlock Podskazka2 = new TextBlock();
+                            Podskazka2.Text = sServer_response;
+                            Podskazka2.Foreground = Brushes.Red;
+                            Podskazka2.Visibility = Visibility.Visible;
+                            return;
+                        }
+                    }
+                    else
+                    {
+                        TextBlock Podskazka1 = new TextBlock();
+                        Podskazka1.Text = "введите пароль";
+                        Podskazka1.Foreground = Brushes.Red;
+                        Podskazka1.Visibility = Visibility.Visible;
+                        return;
+                    }
                 }
+                
+
+            
+
+
                 else
                 {
                     TextBlock Podskazka1 = new TextBlock();
                     Podskazka1.Text = "Введите логин";
                     Podskazka1.Foreground = Brushes.Red;
                     Podskazka1.Visibility = Visibility.Visible;
+                    return;
                 }
+
 
                 MainWindow taskWindow = new MainWindow();
 
@@ -237,96 +239,91 @@ namespace messanger_ui
                 potok_vivoda.Name = "Input_Thread";
                 potok_vivoda.Start();
 
-
-
                 this.Content = taskWindow.Content;
-                #region
-
-                //формат команды для сервера: comand <данные для этой команды>
-                //список команд:
-                //send <получатель> <сообщение> - отправляет сообщение
-                //GetStory <отправитель> - получает всю историю переписки
-                //GetMessage <отправитель> - получает все не полученные сообщения (сейчас бесполезна, но в когда будет граф. инт. будет иметь смысл
-
-
-                //отправка данных
-                /*
-                do
-                {
-                    string comand_pattern = @"^[\w]+";
-                    input = Console.ReadLine();
-                    command = Regex.Match(input, comand_pattern).Value;
-                    GroupCollection groups;
-                    byte[] data;
-                    switch (command)
-                    {
-                        case "send":
-                            #region
-                            string send_pattern = @" ([a-z0-9]+) (.+)";
-                            groups = Regex.Match(input, send_pattern).Groups;
-                            if (groups.Count == 3)
-                            {
-                                message a = new message();
-                                a.reciever = groups[1].Value;
-                                a.content = groups[2].Value;
-                                a.sender = name;
-                                string ms = JsonConvert.SerializeObject(a);
-                                data = Encoding.UTF8.GetBytes("send " + ms);
-                                stream.Write(data, 0, data.Length);
-                            }
-                            else
-                            {
-                                Console.WriteLine("неправильный формат команды");
-                            }
-                            #endregion
-                            break;
-                        case "GetStory":
-                            #region
-                            string GetStory_pattern = @" ([a-z0-9]+)";
-                            groups = Regex.Match(input, GetStory_pattern).Groups;
-                            if (groups.Count != 1)
-                            {
-                                data = Encoding.UTF8.GetBytes("GetStory " + groups[0].Value);
-                                stream.Write(data, 0, data.Length);
-                            }
-                            else
-                            {
-                                Console.WriteLine("неправильный формат команды");
-                            }
-                            #endregion
-                            break;
-                        case "GetMailbox":
-                            if (input.Length != 0)
-                            {
-                                data = Encoding.UTF8.GetBytes("GetMailbox " + "name");
-                                stream.Write(data, 0, data.Length);
-                            }
-                            else
-                            {
-                                Console.WriteLine("неправильный формат команды");
-                            }
-                            break;
-                        default:
-                            Console.WriteLine("Команда не найдена");
-                            break;
-                    }
-                    command = "";
-                    input = "";
-
-                } while (true);
-                */
-
-                #endregion
-
-
             }
+            catch (Exception exp)
+            {
+                Console.WriteLine(exp.Message);
+            }
+            #region
+
+            //формат команды для сервера: comand <данные для этой команды>
+            //список команд:
+            //send <получатель> <сообщение> - отправляет сообщение
+            //GetStory <отправитель> - получает всю историю переписки
+            //GetMessage <отправитель> - получает все не полученные сообщения (сейчас бесполезна, но в когда будет граф. инт. будет иметь смысл
 
 
-        public string GetPassword()
-        {
-            return ParolRegist.Password;
+            //отправка данных
+            /*
+            do
+            {
+                string comand_pattern = @"^[\w]+";
+                input = Console.ReadLine();
+                command = Regex.Match(input, comand_pattern).Value;
+                GroupCollection groups;
+                byte[] data;
+                switch (command)
+                {
+                    case "send":
+                        #region
+                        string send_pattern = @" ([a-z0-9]+) (.+)";
+                        groups = Regex.Match(input, send_pattern).Groups;
+                        if (groups.Count == 3)
+                        {
+                            message a = new message();
+                            a.reciever = groups[1].Value;
+                            a.content = groups[2].Value;
+                            a.sender = name;
+                            string ms = JsonConvert.SerializeObject(a);
+                            data = Encoding.UTF8.GetBytes("send " + ms);
+                            stream.Write(data, 0, data.Length);
+                        }
+                        else
+                        {
+                            Console.WriteLine("неправильный формат команды");
+                        }
+                        #endregion
+                        break;
+                    case "GetStory":
+                        #region
+                        string GetStory_pattern = @" ([a-z0-9]+)";
+                        groups = Regex.Match(input, GetStory_pattern).Groups;
+                        if (groups.Count != 1)
+                        {
+                            data = Encoding.UTF8.GetBytes("GetStory " + groups[0].Value);
+                            stream.Write(data, 0, data.Length);
+                        }
+                        else
+                        {
+                            Console.WriteLine("неправильный формат команды");
+                        }
+                        #endregion
+                        break;
+                    case "GetMailbox":
+                        if (input.Length != 0)
+                        {
+                            data = Encoding.UTF8.GetBytes("GetMailbox " + "name");
+                            stream.Write(data, 0, data.Length);
+                        }
+                        else
+                        {
+                            Console.WriteLine("неправильный формат команды");
+                        }
+                        break;
+                    default:
+                        Console.WriteLine("Команда не найдена");
+                        break;
+                }
+                command = "";
+                input = "";
 
+            } while (true);
+            */
+
+            #endregion
         }
+
 
 
         private void ButRegist_Click(object sender, RoutedEventArgs e)
