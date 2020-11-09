@@ -53,7 +53,14 @@ namespace Messenger_Server_Part
                             }
                             else
                             {
-                                stream.Write(Encoding.UTF8.GetBytes("логин занят"));
+                                if (DataWR.is_possible_data(name))
+                                {
+                                    stream.Write(Encoding.UTF8.GetBytes("логин занят"));
+                                }
+                                else
+                                {
+                                    stream.Write(Encoding.UTF8.GetBytes("неправильный формат логина"));
+                                }
                             }
                         }
                         is_auth = false;
@@ -67,7 +74,7 @@ namespace Messenger_Server_Part
                             }
                             else
                             {
-                                stream.Write(Encoding.UTF8.GetBytes("плохой пароль"));
+                                stream.Write(Encoding.UTF8.GetBytes("неправильный формат пароля"));
                             }
                         }
 

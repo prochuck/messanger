@@ -200,16 +200,15 @@ namespace messanger_ui
                         sServer_response = sRead_stream(stream); // получаем ответ о возможности такого пароля
                         if (sServer_response != "пароль принят") // если пароль проходит открываем окно чата
                         {
-                            TextBlock Podskazka2 = new TextBlock();
-                            Podskazka2.Text = sServer_response;
-                            Podskazka2.Foreground = Brushes.Red;
-                            Podskazka2.Visibility = Visibility.Visible;
+                            Podskazka1.Text = sServer_response;
+                            Podskazka1.Foreground = Brushes.Red;
+                            Podskazka1.Visibility = Visibility.Visible;
+                            return;
                             return;
                         }
                     }
                     else
                     {
-                        TextBlock Podskazka1 = new TextBlock();
                         Podskazka1.Text = "введите пароль";
                         Podskazka1.Foreground = Brushes.Red;
                         Podskazka1.Visibility = Visibility.Visible;
@@ -223,7 +222,6 @@ namespace messanger_ui
 
                 else
                 {
-                    TextBlock Podskazka1 = new TextBlock();
                     Podskazka1.Text = "Введите логин";
                     Podskazka1.Foreground = Brushes.Red;
                     Podskazka1.Visibility = Visibility.Visible;

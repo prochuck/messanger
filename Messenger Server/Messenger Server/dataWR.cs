@@ -23,8 +23,8 @@ namespace Messenger_Server_Part
                 public string password;
             }
             const int max_name_lenght = 20;
-            const int min_name_lenght = 4;
-            const int pass_lenght = 20;
+            const int min_name_lenght = 3;
+            const int max_pas_len = 20;
             const int min_pas_len = 3;
             const string reg_name_pattern = @"\b(^[a-z0-9]*$)";
             const RegexOptions options = RegexOptions.IgnoreCase;
@@ -59,6 +59,12 @@ namespace Messenger_Server_Part
                 if (Regex.IsMatch(name, reg_name_pattern, options) && !is_registred(name) && name.Length >= min_name_lenght && name.Length <= max_name_lenght) return true;
                 return false;
             }
+            static public bool is_possible_data(string name)
+            {
+                bool a = Regex.IsMatch(name, reg_name_pattern, options);
+                if (Regex.IsMatch(name, reg_name_pattern, options) && name.Length >= min_name_lenght && name.Length <= max_name_lenght) return true;
+                return false;
+            }
             static public string get_password_by_name(string name)
             {
                 BinaryFormatter formatter=new BinaryFormatter();
@@ -89,7 +95,7 @@ namespace Messenger_Server_Part
                 {
                     file = File.Open(user_data_patch, FileMode.Append);
                 }
-                if (!Regex.IsMatch(name, reg_name_pattern, options) || !Regex.IsMatch(password, reg_name_pattern, options) || name.Length > max_name_lenght || name.Length < min_name_lenght || password.Length > pass_lenght || pass_lenght < min_pas_len)
+                if (!Regex.IsMatch(name, reg_name_pattern, options) || !Regex.IsMatch(password, reg_name_pattern, options) || name.Length > max_name_lenght || name.Length < min_name_lenght || password.Length > max_pas_len || password.Length < min_pas_len)
                 {
                     file.Close();
                     return false;
