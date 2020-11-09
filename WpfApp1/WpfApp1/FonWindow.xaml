@@ -5,19 +5,21 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:messanger_ui"
         mc:Ignorable="d"
+        Closed="Window_Closed"
+        Loaded="Window_Loaded"
         Title="FonWindow" Height="1080" Width="1920">
     <Grid>
         <Image HorizontalAlignment="Left" Height="1080" Margin="-10,9,0,-38.6" VerticalAlignment="Top" Width="1920" OpacityMask="#FF4040D0" Source="фон1.png"/>
         <Image x:Name="logo" HorizontalAlignment="Left" Height="299" Margin="600,153,0,0" VerticalAlignment="Top" Width="739" Source="лого2.png" Stretch="Fill" OpacityMask="Black"/>
         
         <TextBox x:Name="loginAvto" HorizontalAlignment="Left" Height="100" Margin="500,496,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="920"/>
+
         <PasswordBox x:Name="ParolAvto" HorizontalAlignment="Left" Height="100" Margin="500,650,0,0" VerticalAlignment="Top" Width="920"/>
         
         <Button x:Name="butLogin" Content="ВОЙТИ" HorizontalAlignment="Left" Height="75" Margin="680,781,0,0" VerticalAlignment="Top" Width="565" Click="ButLogin_Click" FontSize="18" FontWeight="Bold"/>
         
         <TextBox x:Name="LoginRegist" HorizontalAlignment="Left" Height="100" Margin="500,352,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="920" Visibility="Collapsed"/>
         <PasswordBox x:Name="ParolRegist" HorizontalAlignment="Left" Height="100" Margin="500,510,0,0"  VerticalAlignment="Top" Width="920" Visibility="Collapsed"/>
-        
         <Button x:Name="butAfterRegist" Content="ВОЙТИ" HorizontalAlignment="Left" Height="60" Margin="680,690,0,0" VerticalAlignment="Top" Width="565" Click="Button_Click1" FontWeight="Bold" FontSize="18" Visibility="Collapsed" />
 
         <Button x:Name="ButRegist" Content="РЕГИСТРАЦИЯ" HorizontalAlignment="Left" Height="57" Margin="747,938,0,0" VerticalAlignment="Top" Width="452" Click="ButRegist_Click" FontWeight="Bold"/>
