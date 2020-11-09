@@ -23,7 +23,7 @@ namespace messanger_ui
     /// <summary>
     /// Логика взаимодействия для FonWindow.xaml
     /// </summary>
-    
+
 
     public partial class FonWindow : Window
     {
@@ -150,82 +150,84 @@ namespace messanger_ui
 
                 //создание потока вывода данных на экран
 
-
-
+            }
+            catch (Exception exp)
+            {
+                Console.WriteLine(exp.Message);
+            }
         }
         private void Button_Click1(object sender, RoutedEventArgs e)
-        {
-        try{
-            TcpClient client = new TcpClient();  // подключаемся к серверу
-            client.Connect(server, port);
-            
-            NetworkStream stream = client.GetStream();
-            
-            string LoginR = LoginRegist.Text;
-            string ParolR = GetPassword();
-
-            String rLoginR = LoginR;
-            String rParolR = ParolR;
-
-            byte[] outLoginR = System.Text.Encoding.UTF8.GetBytes(rLoginR);
-            byte[] outParolR = System.Text.Encoding.UTF8.GetBytes(rParolR);
-            stream.Write(outLoginR, 0, outLoginR.Length);        // отправляем логин на сервер
-            byte[] OtvetLR= new byte[256];
-            int bytes = stream.Read(OtvetLR, 0, OtvetLR.Length); // получаем ответ о возможности такого логина
-            string mOtvetLR = Encoding.UTF8.GetString(OtvetLR, 0, bytes);
-            if (!String.IsNullOrEmpty(rLoginR))   // проверяем заполнение логина
             {
-                Podskazka1.Visibility = Visibility.Collapsed;
+                TcpClient client = new TcpClient();  // подключаемся к серверу
+                client.Connect(server, port);
 
-                if (!String.IsNullOrEmpty(rParolR))   // проверяем заполнение пароля
+                NetworkStream stream = client.GetStream();
+
+                string LoginR = LoginRegist.Text;
+                string ParolR = GetPassword();
+
+                String rLoginR = LoginR;
+                String rParolR = ParolR;
+
+                byte[] outLoginR = System.Text.Encoding.UTF8.GetBytes(rLoginR);
+                byte[] outParolR = System.Text.Encoding.UTF8.GetBytes(rParolR);
+                stream.Write(outLoginR, 0, outLoginR.Length);        // отправляем логин на сервер
+                byte[] OtvetLR = new byte[256];
+                int bytes = stream.Read(OtvetLR, 0, OtvetLR.Length); // получаем ответ о возможности такого логина
+                string mOtvetLR = Encoding.UTF8.GetString(OtvetLR, 0, bytes);
+                if (!String.IsNullOrEmpty(rLoginR))   // проверяем заполнение логина
                 {
-                    Podskazka2.Visibility = Visibility.Collapsed;
+                    Podskazka1.Visibility = Visibility.Collapsed;
 
-                    if (mOtvetLR == "1")
+                    if (!String.IsNullOrEmpty(rParolR))   // проверяем заполнение пароля
                     {
-                        stream.Write(outParolR, 0, outLoginR.Length);    // отправляем пароль на сервер
-                        byte[] OtvetPR = new byte[256];
-                        bytes = stream.Read(OtvetLR, 0, OtvetLR.Length); // получаем ответ о возможности такого логина
-                        string mOtvetPR = Encoding.UTF8.GetString(OtvetLR, 0, bytes);
-                        if (mOtvetPR == "1") // если пароль проходит открываем окно чата
+                        Podskazka2.Visibility = Visibility.Collapsed;
+
+                        if (mOtvetLR == "1")
                         {
-                            MainWindow task1Window = new MainWindow();
-                            this.Content = task1Window.Content;
+                            stream.Write(outParolR, 0, outLoginR.Length);    // отправляем пароль на сервер
+                            byte[] OtvetPR = new byte[256];
+                            bytes = stream.Read(OtvetLR, 0, OtvetLR.Length); // получаем ответ о возможности такого логина
+                            string mOtvetPR = Encoding.UTF8.GetString(OtvetLR, 0, bytes);
+                            if (mOtvetPR == "1") // если пароль проходит открываем окно чата
+                            {
+                                MainWindow task1Window = new MainWindow();
+                                this.Content = task1Window.Content;
+                            }
+                            else if (mOtvetPR == "2") // если нет - выволдим сообщение об ошибки
+                            {
+                                TextBlock Podskazka2 = new TextBlock();
+                                Podskazka2.Text = "Пароль уже занят, попробуйте другой";
+                                Podskazka2.Foreground = Brushes.Red;
+                                Podskazka2.Visibility = Visibility.Visible;
+
+                            }
                         }
-                        else if (mOtvetPR == "2") // если нет - выволдим сообщение об ошибки
+                        else
                         {
                             TextBlock Podskazka2 = new TextBlock();
-                            Podskazka2.Text = "Пароль уже занят, попробуйте другой";
+                            Podskazka2.Text = "Введите пароль";
                             Podskazka2.Foreground = Brushes.Red;
                             Podskazka2.Visibility = Visibility.Visible;
-
-                        }                     
+                        }
                     }
-                    else 
+                    else if (mOtvetLR == "2")
                     {
-                        TextBlock Podskazka2 = new TextBlock();
-                        Podskazka2.Text = "Введите пароль";
-                        Podskazka2.Foreground = Brushes.Red;
-                        Podskazka2.Visibility = Visibility.Visible;
+                        TextBlock Podskazka1 = new TextBlock();
+                        Podskazka1.Text = "Логин уже занят, попробуйте другой";
+                        Podskazka1.Foreground = Brushes.Red;
+                        Podskazka1.Visibility = Visibility.Visible;
                     }
+
+
                 }
-                else if (mOtvetLR == "2")
+                else
                 {
                     TextBlock Podskazka1 = new TextBlock();
-                    Podskazka1.Text = "Логин уже занят, попробуйте другой";
+                    Podskazka1.Text = "Введите логин";
                     Podskazka1.Foreground = Brushes.Red;
                     Podskazka1.Visibility = Visibility.Visible;
                 }
-                
-                
-            }
-            else
-            {
-                TextBlock Podskazka1 = new TextBlock();
-                Podskazka1.Text = "Введите логин";
-                Podskazka1.Foreground = Brushes.Red;
-                Podskazka1.Visibility = Visibility.Visible;
-            }
 
                 MainWindow taskWindow = new MainWindow();
 
@@ -310,21 +312,16 @@ namespace messanger_ui
                     }
                     command = "";
                     input = "";
-                    
+
                 } while (true);
                 */
 
                 #endregion
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
+
+
             }
 
-        }
 
-
-        private void Button_Click1(object sender, RoutedEventArgs e) { }
         public string GetPassword()
         {
             return ParolRegist.Password;
@@ -347,7 +344,7 @@ namespace messanger_ui
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-           
+
         }
         static public string sRead_stream(NetworkStream stream)
         {

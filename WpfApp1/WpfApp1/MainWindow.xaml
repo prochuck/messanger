@@ -16,7 +16,7 @@
         <Grid.OpacityMask>
             <ImageBrush ImageSource="фончата1.png"/>
         </Grid.OpacityMask>
-        <Image   Margin="79,55,0,0" Source="Окно_контактов1.png" HorizontalAlignment="Left" Height="929" Width="483" VerticalAlignment="Top"/>
+        <Image   Margin="79,55,0,0" Source="Окно_контактов1.png" HorizontalAlignment="Left" Height="929" Width="483" VerticalAlignment="Top" d:IsLocked="True"/>
         <ListBox x:Name="user_list" HorizontalAlignment="Left" Height="869" Width="320" Margin="159,97,0,0" Background="#FFEBEAEA" SelectedIndex="0" VerticalAlignment="Top" />
         <TextBox x:Name="input_box" HorizontalAlignment="Left" Height="85" Margin="561,899,0,0" TextWrapping="Wrap" Width="1290" TextInput="input_box_TextInput" TextChanged="input_box_TextChanged" VerticalAlignment="Top" Background="White"/>
         <ListBox x:Name="messages_list" HorizontalAlignment="Left" Height="802" Margin="562,78,0,0" Width="1290" IsSynchronizedWithCurrentItem="True" AllowDrop="True" Focusable="False" VerticalAlignment="Top"/>
