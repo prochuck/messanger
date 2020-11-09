@@ -158,6 +158,20 @@ namespace Messenger_Server_Part
 
                         switch (command)
                         {
+                            case "is_registred":
+                            #region 
+                                //функция для чтения mail
+                                mail = JsonSerializer.Deserialize<Message>(input);
+                                Message ans=new Message();
+                                ans.reciever = name;
+                                ans.sender = "@server";
+                                ans.content = "is_registred ";
+                                if (DataWR.is_registred(mail.content)) ans.content+="yes ";
+                                else ans.content+="no ";
+                                ans.content += mail.content;
+                                Send_message(ans, this, false);
+                                #endregion
+                                break;
                             case "send":
                                 #region 
                                 //функция для чтения mail

@@ -17,8 +17,11 @@
             <ImageBrush ImageSource="фончата1.png"/>
         </Grid.OpacityMask>
         <Image   Margin="79,55,0,0" Source="Окно_контактов1.png" HorizontalAlignment="Left" Height="929" Width="483" VerticalAlignment="Top" d:IsLocked="True"/>
-        <ListBox x:Name="user_list" HorizontalAlignment="Left" Height="869" Width="320" Margin="159,97,0,0" Background="#FFEBEAEA" SelectedIndex="0" VerticalAlignment="Top" />
-        <TextBox x:Name="input_box" HorizontalAlignment="Left" Height="85" Margin="561,899,0,0" TextWrapping="Wrap" Width="1290" TextInput="input_box_TextInput" TextChanged="input_box_TextChanged" VerticalAlignment="Top" Background="White"/>
+        <ListBox x:Name="user_list" HorizontalAlignment="Left" Height="783" Width="320" Margin="159,97,0,0" Background="#FFEBEAEA" SelectedIndex="0" VerticalAlignment="Top" SelectionChanged="user_list_SelectionChanged" />
+        <TextBox x:Name="input_box" HorizontalAlignment="Left" Height="85" Margin="561,899,0,0" TextWrapping="Wrap" Width="1290" TextInput="input_box_TextInput"  VerticalAlignment="Top" Background="White"/>
         <ListBox x:Name="messages_list" HorizontalAlignment="Left" Height="802" Margin="562,78,0,0" Width="1290" IsSynchronizedWithCurrentItem="True" AllowDrop="True" Focusable="False" VerticalAlignment="Top"/>
+        <Button x:Name="name_input_button" Content="Button" HorizontalAlignment="Left" Margin="159,899,0,0" VerticalAlignment="Top" Width="75" Height="85" Click="name_input_button_Click"/>
+        <TextBox x:Name="name_input_box" HorizontalAlignment="Left" Height="85" Margin="234,899,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="245"/>
+        <TextBlock x:Name="name_input_block" HorizontalAlignment="Left" Margin="234,984,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="245" Visibility="Collapsed"></TextBlock>
     </Grid>
 </Window>

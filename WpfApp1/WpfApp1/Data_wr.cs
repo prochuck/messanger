@@ -12,7 +12,7 @@ namespace messanger_ui
 {
     class Data_wr
     {
-        public static string message_history_name { get;private set; } = "history";
+        public static string message_history_name { get;private set; } = "history "+FonWindow.user_name;
         static public bool save_message(Message mess)
         {
             string conv_file_path;

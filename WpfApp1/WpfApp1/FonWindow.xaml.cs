@@ -67,7 +67,7 @@ namespace messanger_ui
             {
                 client.Connect(server, port);
 
-                NetworkStream stream = client.GetStream();
+                stream = client.GetStream();
 
                 string sLogin = loginAvto.Text;
                 string sParol = ParolAvto.Password;
@@ -127,29 +127,11 @@ namespace messanger_ui
                     throw new Exception("нет пароля");
                 }
 
-
-
-
-
-
-
-
-                MainWindow taskWindow = new MainWindow();
-
-                cw_stream np = new cw_stream(stream, taskWindow);
-                Thread potok_vivoda = new Thread(new ThreadStart(np.Vivod));
-                potok_vivoda.IsBackground = true;
-                potok_vivoda.Name = "Input_Thread";
-                potok_vivoda.Start();
-
-                this.Content = taskWindow.Content;
+                Start_io_stream(stream, sLogin);
             }
             catch (Exception exp)
             {
                 Console.WriteLine(exp.Message);
-            }
-            finally
-            {
                 if (stream != null)
                 {
                     stream.Close();
@@ -234,6 +216,7 @@ namespace messanger_ui
             #endregion
         }
 
+        
 
         private void Button_Click1(object sender, RoutedEventArgs e)
         {
@@ -244,7 +227,7 @@ namespace messanger_ui
             {
                 client.Connect(server, port);
 
-                NetworkStream stream = client.GetStream();
+                stream = client.GetStream();
 
                 string sLogin = LoginRegist.Text;
                 string sParol = ParolRegist.Password;
@@ -309,27 +292,15 @@ namespace messanger_ui
 
 
 
-
-
-                MainWindow taskWindow = new MainWindow();
-
-                cw_stream np = new cw_stream(stream, taskWindow);
-                Thread potok_vivoda = new Thread(new ThreadStart(np.Vivod));
-                potok_vivoda.IsBackground = true;
-                potok_vivoda.Name = "Input_Thread";
-                potok_vivoda.Start();
-
-                this.Content = taskWindow.Content;
+                Start_io_stream(stream, sLogin);
             }
             catch (Exception exp)
             {
                 Console.WriteLine(exp.Message);
-            }
-            finally
-            {
                 if (stream != null)
-
+                {
                     stream.Close();
+                }
             }
             #region
 
@@ -410,7 +381,25 @@ namespace messanger_ui
             #endregion
         }
 
+        private void Start_io_stream(NetworkStream stream, string sLogin)
+        {
+            user_name = sLogin;
+            if (!Directory.Exists(Data_wr.message_history_name))
+            {
+                Directory.CreateDirectory(Directory.GetCurrentDirectory() + @"\" + Data_wr.message_history_name);
+            }
 
+           
+            MainWindow taskWindow = new MainWindow();
+
+            cw_stream np = new cw_stream(stream, taskWindow);
+            Thread potok_vivoda = new Thread(new ThreadStart(np.Vivod));
+            potok_vivoda.IsBackground = true;
+            potok_vivoda.Name = "Input_Thread";
+            potok_vivoda.Start();
+
+            this.Content = taskWindow.Content;
+        }
 
 
 

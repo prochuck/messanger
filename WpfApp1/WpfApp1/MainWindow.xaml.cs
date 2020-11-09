@@ -120,8 +120,6 @@ namespace messanger_ui
             #endregion
         }
 
-
-        
         private void user_list_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             messages_list.Items.Clear();
@@ -165,9 +163,17 @@ namespace messanger_ui
             }
         }
 
-        private void input_box_TextChanged(object sender, TextChangedEventArgs e)
-        {
 
+        private void name_input_button_Click(object sender, RoutedEventArgs e)
+        {
+            name_input_block.Visibility = Visibility.Collapsed;
+            Message message = new Message();
+            message.sender = FonWindow.user_name;
+            message.reciever = "@server";
+            message.content = name_input_box.Text;
+            string jMessage = "is_registred "+ JsonConvert.SerializeObject(message);
+            FonWindow.stream.Write(Encoding.UTF8.GetBytes(jMessage), 0, Encoding.UTF8.GetBytes(jMessage).Length);
+            
         }
     }
 }
