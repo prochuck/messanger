@@ -41,15 +41,13 @@
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xaml" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Net.Http" />
-    <Reference Include="System.Xaml">
-      <RequiredTargetFramework>4.0</RequiredTargetFramework>
-    </Reference>
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
@@ -59,6 +57,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="FonChat.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="FonWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -73,6 +75,9 @@
     </Compile>
     <Compile Include="crypt.cs" />
     <Compile Include="cw_stream.cs" />
+    <Compile Include="FonChat.xaml.cs">
+      <DependentUpon>FonChat.xaml</DependentUpon>
+    </Compile>
     <Compile Include="FonWindow.xaml.cs">
       <DependentUpon>FonWindow.xaml</DependentUpon>
     </Compile>
@@ -114,6 +119,9 @@
     <Resource Include="фон1.png" />
     <Resource Include="фончата.png" />
     <Resource Include="фончата1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Окно_контактов1.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

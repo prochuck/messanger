@@ -296,5 +296,10 @@ namespace messanger_ui
         {
             Environment.Exit(0);
         }
+
+        private void input_box_TextChanged(object sender, TextChangedEventArgs e)
+        {
+
+        }
     }
 }
