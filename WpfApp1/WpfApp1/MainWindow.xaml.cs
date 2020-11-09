@@ -164,5 +164,10 @@ namespace messanger_ui
                 user_list.Items.Add(textBlock);
             }
         }
+
+        private void input_box_TextChanged(object sender, TextChangedEventArgs e)
+        {
+
+        }
     }
 }

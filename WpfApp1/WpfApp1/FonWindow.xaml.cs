@@ -152,6 +152,81 @@ namespace messanger_ui
 
 
 
+        }
+        private void Button_Click1(object sender, RoutedEventArgs e)
+        {
+        try{
+            TcpClient client = new TcpClient();  // подключаемся к серверу
+            client.Connect(server, port);
+            
+            NetworkStream stream = client.GetStream();
+            
+            string LoginR = LoginRegist.Text;
+            string ParolR = GetPassword();
+
+            String rLoginR = LoginR;
+            String rParolR = ParolR;
+
+            byte[] outLoginR = System.Text.Encoding.UTF8.GetBytes(rLoginR);
+            byte[] outParolR = System.Text.Encoding.UTF8.GetBytes(rParolR);
+            stream.Write(outLoginR, 0, outLoginR.Length);        // отправляем логин на сервер
+            byte[] OtvetLR= new byte[256];
+            int bytes = stream.Read(OtvetLR, 0, OtvetLR.Length); // получаем ответ о возможности такого логина
+            string mOtvetLR = Encoding.UTF8.GetString(OtvetLR, 0, bytes);
+            if (!String.IsNullOrEmpty(rLoginR))   // проверяем заполнение логина
+            {
+                Podskazka1.Visibility = Visibility.Collapsed;
+
+                if (!String.IsNullOrEmpty(rParolR))   // проверяем заполнение пароля
+                {
+                    Podskazka2.Visibility = Visibility.Collapsed;
+
+                    if (mOtvetLR == "1")
+                    {
+                        stream.Write(outParolR, 0, outLoginR.Length);    // отправляем пароль на сервер
+                        byte[] OtvetPR = new byte[256];
+                        bytes = stream.Read(OtvetLR, 0, OtvetLR.Length); // получаем ответ о возможности такого логина
+                        string mOtvetPR = Encoding.UTF8.GetString(OtvetLR, 0, bytes);
+                        if (mOtvetPR == "1") // если пароль проходит открываем окно чата
+                        {
+                            MainWindow task1Window = new MainWindow();
+                            this.Content = task1Window.Content;
+                        }
+                        else if (mOtvetPR == "2") // если нет - выволдим сообщение об ошибки
+                        {
+                            TextBlock Podskazka2 = new TextBlock();
+                            Podskazka2.Text = "Пароль уже занят, попробуйте другой";
+                            Podskazka2.Foreground = Brushes.Red;
+                            Podskazka2.Visibility = Visibility.Visible;
+
+                        }                     
+                    }
+                    else 
+                    {
+                        TextBlock Podskazka2 = new TextBlock();
+                        Podskazka2.Text = "Введите пароль";
+                        Podskazka2.Foreground = Brushes.Red;
+                        Podskazka2.Visibility = Visibility.Visible;
+                    }
+                }
+                else if (mOtvetLR == "2")
+                {
+                    TextBlock Podskazka1 = new TextBlock();
+                    Podskazka1.Text = "Логин уже занят, попробуйте другой";
+                    Podskazka1.Foreground = Brushes.Red;
+                    Podskazka1.Visibility = Visibility.Visible;
+                }
+                
+                
+            }
+            else
+            {
+                TextBlock Podskazka1 = new TextBlock();
+                Podskazka1.Text = "Введите логин";
+                Podskazka1.Foreground = Brushes.Red;
+                Podskazka1.Visibility = Visibility.Visible;
+            }
+
                 MainWindow taskWindow = new MainWindow();
 
                 cw_stream np = new cw_stream(stream, taskWindow);
@@ -159,6 +234,8 @@ namespace messanger_ui
                 potok_vivoda.IsBackground = true;
                 potok_vivoda.Name = "Input_Thread";
                 potok_vivoda.Start();
+
+
 
                 this.Content = taskWindow.Content;
                 #region
@@ -243,6 +320,7 @@ namespace messanger_ui
             {
                 Console.WriteLine(ex.Message);
             }
+
         }
 
 

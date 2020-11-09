@@ -7,11 +7,18 @@
         mc:Ignorable="d"
         Initialized="w1_instantiated"
         Name="w1"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid x:Name="main_grid">
-        <ListBox x:Name="user_list" HorizontalAlignment="Left" Height="399" VerticalAlignment="Top" Width="141" Margin="10,10,0,0"  SelectionChanged="user_list_SelectionChanged"/>
-        <ListBox x:Name="messages_list" HorizontalAlignment="Left" Height="348" Margin="156,10,0,0" VerticalAlignment="Top" Width="626" IsSynchronizedWithCurrentItem="True" AllowDrop="True"  Grid.ColumnSpan="2" Focusable="False"/>
-        <TextBox x:Name="input_box" HorizontalAlignment="Left" Height="45" Margin="156,363,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="626" Grid.ColumnSpan="2" TextInput="input_box_TextInput"/>
 
+        Title="MainWindow" Height="1080" Width="1920">
+    <Grid HorizontalAlignment="Left" Height="1052" Margin="-3,2,-3.4,-3.6" VerticalAlignment="Top" Width="1920">
+        <Grid.Background>
+            <ImageBrush ImageSource="фончата1.png"/>
+        </Grid.Background>
+        <Grid.OpacityMask>
+            <ImageBrush ImageSource="фончата1.png"/>
+        </Grid.OpacityMask>
+        <Image   Margin="79,55,0,0" Source="Окно_контактов1.png" HorizontalAlignment="Left" Height="929" Width="483" VerticalAlignment="Top"/>
+        <ListBox x:Name="user_list" HorizontalAlignment="Left" Height="869" Width="320" Margin="159,97,0,0" Background="#FFEBEAEA" SelectedIndex="0" VerticalAlignment="Top" />
+        <TextBox x:Name="input_box" HorizontalAlignment="Left" Height="85" Margin="561,899,0,0" TextWrapping="Wrap" Width="1290" TextInput="input_box_TextInput" TextChanged="input_box_TextChanged" VerticalAlignment="Top" Background="White"/>
+        <ListBox x:Name="messages_list" HorizontalAlignment="Left" Height="802" Margin="562,78,0,0" Width="1290" IsSynchronizedWithCurrentItem="True" AllowDrop="True" Focusable="False" VerticalAlignment="Top"/>
     </Grid>
 </Window>
