@@ -58,106 +58,10 @@ namespace messanger_ui
         {
             login
         }
-
         private void ButLogin_Click(object sender, RoutedEventArgs e)
         {
-            user_name = null;
-            bool isReg;
-            string password;
-            if (File.Exists(user_data_file_name))
-            {
-                string jFileText = File.ReadAllText(user_data_file_name);
-                user_data user = JsonConvert.DeserializeObject<user_data>(jFileText);
-                user_name = user.name;
-                password = user.password;
-                isReg = true;
-            }
-            else
-            {
-                isReg = false;
-                password = "";
-            }
-
-
-            if (!Directory.Exists(Data_wr.message_history_name))
-            {
-                Directory.CreateDirectory(Data_wr.message_history_name);
-            }
-
-            try
-            {
-
-                TcpClient client = new TcpClient();
-                client.Connect(server, port);
-                StringBuilder response = new StringBuilder();
-                stream = client.GetStream();
-
-
-
-                //переключатель зарегистрированности
-                //isReg = false;
-
-                //отправка своего имени
-                string ans = null;
-                if (isReg)
-                {
-                    stream.Write(Encoding.UTF8.GetBytes("log"), 0, Encoding.UTF8.GetBytes("log").Length);
-                    sRead_stream(stream);
-                    stream.Write(Encoding.UTF8.GetBytes(user_name), 0, Encoding.UTF8.GetBytes(user_name).Length);
-                    ans = sRead_stream(stream);
-                    if (ans == "пользователь уже в сети") throw new Exception("пользователь уже в сети");
-                    else if (ans == "логин не найден") throw new Exception("логин не найден");
-                    else ans = "";
-                    stream.Write(Encoding.UTF8.GetBytes(password), 0, Encoding.UTF8.GetBytes(password).Length);
-                    ans = sRead_stream(stream);
-                    if (ans != "авторизирован") throw new Exception("ошибка авторизации");
-                    Console.WriteLine(ans);
-                }
-                else
-                {
-                    stream.Write(Encoding.UTF8.GetBytes("reg"), 0, Encoding.UTF8.GetBytes("reg").Length);
-                    sRead_stream(stream);
-                    while (ans != "логин доступен")
-                    {
-                        if (ans != null) Console.WriteLine(ans);
-                        user_name = Console.ReadLine();
-                        stream.Write(Encoding.UTF8.GetBytes(user_name), 0, Encoding.UTF8.GetBytes("reg").Length);
-                        ans = sRead_stream(stream);
-                    }
-                    Console.WriteLine(ans);
-                    ans = null;
-                    while (ans != "пароль принят")
-                    {
-                        if (ans != null) Console.WriteLine(ans);
-                        password = Console.ReadLine();
-                        stream.Write(Encoding.UTF8.GetBytes(password), 0, Encoding.UTF8.GetBytes(password).Length);
-                        ans = sRead_stream(stream);
-                    }
-                    Console.WriteLine(ans);
-                }
-
-
-                if (!isReg)
-                {
-                    isReg = true;
-
-                    user_data user = new user_data();
-                    user.name = user_name;
-                    user.password = password;
-                    string a = JsonConvert.SerializeObject(user);
-                    File.WriteAllText(user_data_file_name, a);
-                }
-
-                //создание потока вывода данных на экран
-
-            }
-            catch (Exception exp)
-            {
-                Console.WriteLine(exp.Message);
-            }
-        }
-        private void Button_Click1(object sender, RoutedEventArgs e)
-        {
+            Podskazka1.Text = "";
+            Podskazka2.Text = "";
             TcpClient client = new TcpClient();  // подключаемся к серверу
             try
             {
@@ -165,15 +69,15 @@ namespace messanger_ui
 
                 NetworkStream stream = client.GetStream();
 
-                string sLogin = LoginRegist.Text;
-                string sParol = ParolRegist.Password;
+                string sLogin = loginAvto.Text;
+                string sParol = ParolAvto.Password;
                 string sServer_response;
 
                 byte[] outLoginR = System.Text.Encoding.UTF8.GetBytes(sLogin);
                 byte[] outParolR = System.Text.Encoding.UTF8.GetBytes(sParol);
                 byte[] OtvetLR = new byte[256];
 
-                stream.Write(Encoding.UTF8.GetBytes("reg"), 0, Encoding.UTF8.GetBytes("reg").Length);
+                stream.Write(Encoding.UTF8.GetBytes("log"), 0, Encoding.UTF8.GetBytes("log").Length);
                 sRead_stream(stream);
 
 
@@ -183,50 +87,51 @@ namespace messanger_ui
                     Podskazka1.Visibility = Visibility.Collapsed;
                     stream.Write(outLoginR, 0, outLoginR.Length);        // отправляем логин на сервер
                     sServer_response = sRead_stream(stream); // получаем ответ о возможности такого логина
-                   
 
-                    if (sServer_response != "логин доступен")
+
+                    if (sServer_response != "доступен")
                     {
                         Podskazka1.Text = sServer_response;
                         Podskazka1.Foreground = Brushes.Red;
                         Podskazka1.Visibility = Visibility.Visible;
-                        return;
+                        throw new Exception(sServer_response);
                     }
-                    if (!String.IsNullOrEmpty(sParol))   // проверяем заполнение пароля
-                    {
-                        Podskazka2.Visibility = Visibility.Collapsed;
-                        stream.Write(outParolR, 0, outParolR.Length);    // отправляем пароль на сервер
-                        byte[] OtvetPR = new byte[256];
-                        sServer_response = sRead_stream(stream); // получаем ответ о возможности такого пароля
-                        if (sServer_response != "пароль принят") // если пароль проходит открываем окно чата
-                        {
-                            Podskazka1.Text = sServer_response;
-                            Podskazka1.Foreground = Brushes.Red;
-                            Podskazka1.Visibility = Visibility.Visible;
-                            return;
-                            return;
-                        }
-                    }
-                    else
-                    {
-                        Podskazka1.Text = "введите пароль";
-                        Podskazka1.Foreground = Brushes.Red;
-                        Podskazka1.Visibility = Visibility.Visible;
-                        return;
-                    }
+
                 }
-                
-
-            
-
-
                 else
                 {
                     Podskazka1.Text = "Введите логин";
                     Podskazka1.Foreground = Brushes.Red;
                     Podskazka1.Visibility = Visibility.Visible;
-                    return;
+                    throw new Exception("нет логина");
                 }
+                if (!String.IsNullOrEmpty(sParol))   // проверяем заполнение пароля
+                {
+                    Podskazka2.Visibility = Visibility.Collapsed;
+                    stream.Write(outParolR, 0, outParolR.Length);    // отправляем пароль на сервер
+                    byte[] OtvetPR = new byte[256];
+                    sServer_response = sRead_stream(stream); // получаем ответ о возможности такого пароля
+                    if (sServer_response != "авторизирован") // если пароль проходит открываем окно чата
+                    {
+                        Podskazka2.Text = sServer_response;
+                        Podskazka2.Foreground = Brushes.Red;
+                        Podskazka2.Visibility = Visibility.Visible;
+                        throw new Exception(sServer_response);
+                    }
+                }
+                else
+                {
+                    Podskazka2.Text = "введите пароль";
+                    Podskazka2.Foreground = Brushes.Red;
+                    Podskazka2.Visibility = Visibility.Visible;
+                    throw new Exception("нет пароля");
+                }
+
+
+
+
+
+
 
 
                 MainWindow taskWindow = new MainWindow();
@@ -242,6 +147,13 @@ namespace messanger_ui
             catch (Exception exp)
             {
                 Console.WriteLine(exp.Message);
+            }
+            finally
+            {
+                if (stream != null)
+                {
+                    stream.Close();
+                }
             }
             #region
 
@@ -321,6 +233,184 @@ namespace messanger_ui
 
             #endregion
         }
+
+
+        private void Button_Click1(object sender, RoutedEventArgs e)
+        {
+            Podskazka1.Text = "";
+            Podskazka2.Text = "";
+            TcpClient client = new TcpClient();  // подключаемся к серверу
+            try
+            {
+                client.Connect(server, port);
+
+                NetworkStream stream = client.GetStream();
+
+                string sLogin = LoginRegist.Text;
+                string sParol = ParolRegist.Password;
+                string sServer_response;
+
+                byte[] outLoginR = System.Text.Encoding.UTF8.GetBytes(sLogin);
+                byte[] outParolR = System.Text.Encoding.UTF8.GetBytes(sParol);
+                byte[] OtvetLR = new byte[256];
+
+                stream.Write(Encoding.UTF8.GetBytes("reg"), 0, Encoding.UTF8.GetBytes("reg").Length);
+                sRead_stream(stream);
+
+
+
+                if (!String.IsNullOrEmpty(sLogin))   // проверяем заполнение логина
+                {
+                    Podskazka1.Visibility = Visibility.Collapsed;
+                    stream.Write(outLoginR, 0, outLoginR.Length);        // отправляем логин на сервер
+                    sServer_response = sRead_stream(stream); // получаем ответ о возможности такого логина
+
+
+                    if (sServer_response != "логин доступен")
+                    {
+                        Podskazka1.Text = sServer_response;
+                        Podskazka1.Foreground = Brushes.Red;
+                        Podskazka1.Visibility = Visibility.Visible;
+                        throw new Exception(sServer_response);
+                    }
+
+                }
+                else
+                {
+                    Podskazka1.Text = "Введите логин";
+                    Podskazka1.Foreground = Brushes.Red;
+                    Podskazka1.Visibility = Visibility.Visible;
+                    throw new Exception("нет логина");
+                }
+                if (!String.IsNullOrEmpty(sParol))   // проверяем заполнение пароля
+                {
+                    Podskazka2.Visibility = Visibility.Collapsed;
+                    stream.Write(outParolR, 0, outParolR.Length);    // отправляем пароль на сервер
+                    byte[] OtvetPR = new byte[256];
+                    sServer_response = sRead_stream(stream); // получаем ответ о возможности такого пароля
+                    if (sServer_response != "пароль принят") // если пароль проходит открываем окно чата
+                    {
+                        Podskazka2.Text = sServer_response;
+                        Podskazka2.Foreground = Brushes.Red;
+                        Podskazka2.Visibility = Visibility.Visible;
+                        throw new Exception(sServer_response);
+                    }
+                }
+                else
+                {
+                    Podskazka2.Text = "введите пароль";
+                    Podskazka2.Foreground = Brushes.Red;
+                    Podskazka2.Visibility = Visibility.Visible;
+                    throw new Exception("нет пароля");
+                }
+
+
+
+
+
+
+
+
+                MainWindow taskWindow = new MainWindow();
+
+                cw_stream np = new cw_stream(stream, taskWindow);
+                Thread potok_vivoda = new Thread(new ThreadStart(np.Vivod));
+                potok_vivoda.IsBackground = true;
+                potok_vivoda.Name = "Input_Thread";
+                potok_vivoda.Start();
+
+                this.Content = taskWindow.Content;
+            }
+            catch (Exception exp)
+            {
+                Console.WriteLine(exp.Message);
+            }
+            finally
+            {
+                if (stream != null)
+
+                    stream.Close();
+            }
+            #region
+
+            //формат команды для сервера: comand <данные для этой команды>
+            //список команд:
+            //send <получатель> <сообщение> - отправляет сообщение
+            //GetStory <отправитель> - получает всю историю переписки
+            //GetMessage <отправитель> - получает все не полученные сообщения (сейчас бесполезна, но в когда будет граф. инт. будет иметь смысл
+
+
+            //отправка данных
+            /*
+            do
+            {
+                string comand_pattern = @"^[\w]+";
+                input = Console.ReadLine();
+                command = Regex.Match(input, comand_pattern).Value;
+                GroupCollection groups;
+                byte[] data;
+                switch (command)
+                {
+                    case "send":
+                        #region
+                        string send_pattern = @" ([a-z0-9]+) (.+)";
+                        groups = Regex.Match(input, send_pattern).Groups;
+                        if (groups.Count == 3)
+                        {
+                            message a = new message();
+                            a.reciever = groups[1].Value;
+                            a.content = groups[2].Value;
+                            a.sender = name;
+                            string ms = JsonConvert.SerializeObject(a);
+                            data = Encoding.UTF8.GetBytes("send " + ms);
+                            stream.Write(data, 0, data.Length);
+                        }
+                        else
+                        {
+                            Console.WriteLine("неправильный формат команды");
+                        }
+                        #endregion
+                        break;
+                    case "GetStory":
+                        #region
+                        string GetStory_pattern = @" ([a-z0-9]+)";
+                        groups = Regex.Match(input, GetStory_pattern).Groups;
+                        if (groups.Count != 1)
+                        {
+                            data = Encoding.UTF8.GetBytes("GetStory " + groups[0].Value);
+                            stream.Write(data, 0, data.Length);
+                        }
+                        else
+                        {
+                            Console.WriteLine("неправильный формат команды");
+                        }
+                        #endregion
+                        break;
+                    case "GetMailbox":
+                        if (input.Length != 0)
+                        {
+                            data = Encoding.UTF8.GetBytes("GetMailbox " + "name");
+                            stream.Write(data, 0, data.Length);
+                        }
+                        else
+                        {
+                            Console.WriteLine("неправильный формат команды");
+                        }
+                        break;
+                    default:
+                        Console.WriteLine("Команда не найдена");
+                        break;
+                }
+                command = "";
+                input = "";
+
+            } while (true);
+            */
+
+            #endregion
+        }
+
+
 
 
 

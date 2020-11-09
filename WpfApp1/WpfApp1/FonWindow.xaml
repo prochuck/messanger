@@ -24,7 +24,7 @@
 
         <Button x:Name="ButRegist" Content="РЕГИСТРАЦИЯ" HorizontalAlignment="Left" Height="57" Margin="747,938,0,0" VerticalAlignment="Top" Width="452" Click="ButRegist_Click" FontWeight="Bold"/>
         
-        <TextBlock x:Name="Podskazka1" HorizontalAlignment="Left" Height="28" Margin="500,319,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="333" Visibility="Collapsed"/>
+        <TextBlock x:Name="Podskazka1" HorizontalAlignment="Left" Height="28" Margin="500,319,0,0" TextWrapping="Wrap" Text="fsadfasdf" VerticalAlignment="Top" Width="333" Visibility="Collapsed"/>
         <TextBlock x:Name="Podskazka2" HorizontalAlignment="Left" Height="28" Margin="500,477,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="333" Visibility="Collapsed"/>
 
 
