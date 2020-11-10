@@ -389,11 +389,14 @@ namespace messanger_ui
                 Directory.CreateDirectory(Directory.GetCurrentDirectory() + @"\" + Data_wr.message_history_name);
             }
 
-           
+
             MainWindow taskWindow = new MainWindow();
 
             cw_stream np = new cw_stream(stream, taskWindow);
             Thread potok_vivoda = new Thread(new ThreadStart(np.Vivod));
+
+            byte[] data = Encoding.UTF8.GetBytes("GetMailbox " + user_name+"\n");
+            FonWindow.stream.Write(data, 0, data.Length);
             potok_vivoda.IsBackground = true;
             potok_vivoda.Name = "Input_Thread";
             potok_vivoda.Start();

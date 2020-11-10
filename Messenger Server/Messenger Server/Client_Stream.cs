@@ -13,15 +13,20 @@ namespace Messenger_Server_Part
 {
     partial class Program
     {
+        static Dictionary<string,List<Client_Stream>> dAll_Interest_Lists=new Dictionary<string,List<Client_Stream>>();
+        static object locker_all_interest = new object();
         static object locker_online_list = new object();
         public class Client_Stream
         {
+            public object send_message_locker = new object();
             public TcpClient client;
-            public string name{get;private set;}
+            public string name { get; private set; }
             string password;
             bool is_auth = false;
             NetworkStream stream = null;
-            public int idList=-1;
+            public int idList = -1;
+            List<string> interes_list = new List<string>();
+
             public Client_Stream(TcpClient tcpClient)
             {
                 client = tcpClient;
@@ -29,7 +34,7 @@ namespace Messenger_Server_Part
 
             public void tcpConnection()
             {
-                
+
                 List<byte> some_data = new List<byte>();
 
 
@@ -116,8 +121,21 @@ namespace Messenger_Server_Part
                     }
                     else throw new Exception("ошибка подключения: не указанна цель");
 
-
-
+                    if (dAll_Interest_Lists.ContainsKey(name))
+                    {
+                        lock (locker_all_interest)
+                        {
+                            int a = dAll_Interest_Lists[name].Count;
+                            for (int i = 0; i < a; i++)
+                            {
+                                Message message = new Message();
+                                message.sender = "@server";
+                                message.reciever = dAll_Interest_Lists[name][i].name;
+                                message.content = "is_online yes " + name;
+                                Send_message(message, dAll_Interest_Lists[name][i], false);
+                            }
+                        }
+                    }
                     lock (locker_online_list)
                     {
                         idList = online_list.Count;
@@ -125,19 +143,41 @@ namespace Messenger_Server_Part
                     }
                     byte[] buffer = new byte[64];
                     int count = 0;
-                    string command,input = "";
-
+                    string command, input = "";
+                    string tmp = "";
+                    command = "";
+                    input = "";
                     while (true)
                     {
 
                         string command_pattern = @"(^[A-z0-9]+ )";
-                        command = "";
-                        input = "";
+
                         Message mail;
-                        count = 0;
+                        // переносит символы, не относящиеся к текущему сообщение в следующие сообщение.
+
                         // чтение команды
-                        input = sRead_stream(stream);
-                        if (input.Length==0)
+                        if (tmp.Length == 0)
+                        {
+                            input = sRead_stream(stream);
+                        }
+                        else if (tmp.EndsWith("\n"))
+                        {
+                            input = tmp;
+                        }
+                        else
+                        {
+                            input = tmp + sRead_stream(stream);
+                        }
+                        if (input.Contains("\n"))
+                        {
+                            tmp = input.Substring(input.IndexOf("\n") + 1);
+                            input = input.Substring(0, input.IndexOf("\n"));
+                        }
+
+
+
+
+                        if (input.Length == 0)
                         {
                             Message message = new Message();
                             message.content = "alive";
@@ -151,23 +191,68 @@ namespace Messenger_Server_Part
                             continue;
                         }
                         command = Regex.Match(input, command_pattern).Value.Trim();
-                        if (command.Length+1<input.Length)
+                        if (command.Length + 1 < input.Length)
                         {
-                            input = input.Substring(command.Length+1);
+                            input = input.Substring(command.Length + 1);
                         }
 
+                        Message ans;
                         switch (command)
                         {
+                            case "is_online":
+                                #region 
+                                mail = JsonSerializer.Deserialize<Message>(input);
+                                ans = new Message();
+                                ans.reciever = name;
+                                ans.sender = "@server";
+                                ans.content = "is_online ";
+                                bool is_find = false;
+                                lock (locker_online_list)
+                                {
+                                    if (DataWR.is_registred(mail.content))
+                                    {
+                                        interes_list.Add(mail.content);
+                                        lock (locker_all_interest)
+                                        {
+                                            if (dAll_Interest_Lists.ContainsKey(mail.content))
+                                            {
+                                                dAll_Interest_Lists[mail.content].Add(this);
+                                            }
+                                            else
+                                            {
+                                                dAll_Interest_Lists.Add(mail.content, new List<Client_Stream>());
+                                                dAll_Interest_Lists[mail.content].Add(this);
+                                            }
+                                        }
+                                        foreach (var user in online_list)
+                                        {
+                                            if (user.name == mail.content)
+                                            {
+                                                is_find = true;
+                                                break;
+                                            }
+                                        }
+                                    }
+                                }
+                                if (is_find)
+                                {
+                                    ans.content += "yes ";
+                                }
+                                else ans.content += "no ";
+                                ans.content += mail.content;
+                                Send_message(ans, this, false);
+                                #endregion 
+                                break;
                             case "is_registred":
-                            #region 
+                                #region 
                                 //функция для чтения mail
                                 mail = JsonSerializer.Deserialize<Message>(input);
-                                Message ans=new Message();
+                                ans = new Message();
                                 ans.reciever = name;
                                 ans.sender = "@server";
                                 ans.content = "is_registred ";
-                                if (DataWR.is_registred(mail.content)) ans.content+="yes ";
-                                else ans.content+="no ";
+                                if (DataWR.is_registred(mail.content)) ans.content += "yes ";
+                                else ans.content += "no ";
                                 ans.content += mail.content;
                                 Send_message(ans, this, false);
                                 #endregion
@@ -185,24 +270,24 @@ namespace Messenger_Server_Part
                                         is_sended = true;
                                         foreach (Client_Stream user in online_list)
                                         {
-                                            Send_message(mail, user,false);
+                                            Send_message(mail, user, false);
                                         }
                                         break;
                                     }
                                     //отправка сообщения конкретному пользователю 
                                     for (int i = 0; i < online_list.Count; i++)
                                     {
-                                        
+
                                         if (online_list[i].name == mail.reciever)
                                         {
                                             is_sended = true;
-                                            Send_message(mail, online_list[i],true);
+                                            Send_message(mail, online_list[i], true);
                                             break;
                                         }
                                     }
                                 }
 
-                                if (!is_sended&&DataWR.is_registred(mail.reciever))
+                                if (!is_sended && DataWR.is_registred(mail.reciever))
                                 {
                                     DataWR.save_message_to_mailbox(mail);
                                 }
@@ -213,14 +298,17 @@ namespace Messenger_Server_Part
                                 input = input.Trim();
 
                                 //наверное это хороший способ? надо спросить кого0нибудь кто гарит...
-                                FileStream fileStream=null;
-                                DataWR.Message_worker message_Worker = new DataWR.Message_worker(name,input, out fileStream);
+                                FileStream fileStream = null;
+                                DataWR.Message_worker message_Worker = new DataWR.Message_worker(name, input, out fileStream);
                                 Message ms = message_Worker.Next();
-                                while (ms.sender!=null)
+
+
+                                while (ms.sender != null)
                                 {
-                                    Send_message(ms, this,false);
+                                    Send_message(ms, this, false);
                                     ms = message_Worker.Next();
                                 }
+
                                 fileStream.Close();
                                 #endregion
                                 break;
@@ -235,20 +323,20 @@ namespace Messenger_Server_Part
                                     Send_message(ms, this, true);
                                     ms = message_Worker.Next();
                                 }
-                                
+
+
                                 fileStream.Close();
                                 #endregion
                                 break;
                             default:
                                 break;
                         }
-
                     }
 
                 }
                 catch (IOException exp)
                 {
-                    
+
                 }
                 catch (Exception exception)
                 {
@@ -257,7 +345,40 @@ namespace Messenger_Server_Part
                 }
                 finally
                 {
-                    if (name != "") Console.WriteLine("подключение закрыто для " + name);
+                    if (name != "" && is_auth)
+                    {
+
+                        lock (locker_all_interest)
+                        {
+                            if (dAll_Interest_Lists.ContainsKey(name))
+                            {
+                                int a = dAll_Interest_Lists[name].Count;
+                                for (int i = 0; i < a; i++)
+                                {
+                                    Message message = new Message();
+                                    message.sender = "@server";
+                                    message.reciever = dAll_Interest_Lists[name][i].name;
+                                    message.content = "is_online no " + name;
+                                    Send_message(message, dAll_Interest_Lists[name][i], false);
+                                }
+                            }
+                            for (int i = 0; i < interes_list.Count; i++)
+                            {
+                                int b = dAll_Interest_Lists[interes_list[i]].Count;
+                                for (int j = 0; j < b; j++)
+                                {
+                                    if (dAll_Interest_Lists[interes_list[i]][j].name == name)
+                                    {
+                                        dAll_Interest_Lists[interes_list[i]].RemoveAt(j);
+                                    }
+                                }
+                            }
+                        }
+
+
+                        Console.WriteLine("подключение закрыто для " + name);
+                    }
+
                     if (idList >= 0)
                     {
                         lock (locker_online_list)
@@ -280,7 +401,10 @@ namespace Messenger_Server_Part
             {
                 
                 string mess=JsonSerializer.Serialize<Message>(mail)+"\n";
-                user.stream.Write(Encoding.UTF8.GetBytes(mess));
+                lock (user.send_message_locker)
+                {
+                    user.stream.Write(Encoding.UTF8.GetBytes(mess));
+                }
                 if (bSave_to_story)  DataWR.save_message(mail);
             }
 

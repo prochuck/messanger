@@ -61,7 +61,7 @@ namespace messanger_ui
                 messages_list.Items.Add(new TextBlock().Text = a.sender + ": " + a.content);
                 byte[] data;
                 string ms = JsonConvert.SerializeObject(a);
-                data = Encoding.UTF8.GetBytes("send " + ms);
+                data = Encoding.UTF8.GetBytes("send " + ms + "\n");
                 FonWindow.stream.Write(data, 0, data.Length);
             }
             #region
@@ -154,13 +154,27 @@ namespace messanger_ui
         private void w1_instantiated(object sender, EventArgs e)
         {
             string[] contacts = Data_wr.Get_All_Contacts();
-            for (int i = 0; i < contacts.Length; i++)
+
+            lock (saved_list_locker)
             {
-                saved_users_list.Add(contacts[i]);
-                TextBlock textBlock = new TextBlock();
-                textBlock.Text = contacts[i];
-                user_list.Items.Add(textBlock);
+                for (int i = 0; i < contacts.Length; i++)
+                {
+                    saved_users_list.Add(contacts[i]);
+                    TextBlock textBlock = new TextBlock();
+                    textBlock.Text = contacts[i];
+                    user_list.Items.Add(textBlock);
+
+
+                    Message message = new Message();
+                    message.sender = FonWindow.user_name;
+                    message.reciever = "@server";
+                    message.content = contacts[i];
+                    string jMessage = "is_online " + JsonConvert.SerializeObject(message);
+                    FonWindow.stream.Write(Encoding.UTF8.GetBytes(jMessage + "\n"), 0, Encoding.UTF8.GetBytes(jMessage + "\n").Length);
+
+                }
             }
+
         }
 
 
@@ -172,8 +186,7 @@ namespace messanger_ui
             message.reciever = "@server";
             message.content = name_input_box.Text;
             string jMessage = "is_registred "+ JsonConvert.SerializeObject(message);
-            FonWindow.stream.Write(Encoding.UTF8.GetBytes(jMessage), 0, Encoding.UTF8.GetBytes(jMessage).Length);
-            
+            FonWindow.stream.Write(Encoding.UTF8.GetBytes(jMessage + "\n"), 0, Encoding.UTF8.GetBytes(jMessage + "\n").Length);
         }
     }
 }

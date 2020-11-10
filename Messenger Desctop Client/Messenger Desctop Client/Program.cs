@@ -158,7 +158,7 @@ namespace TcpClientApp
                                 a.reciever = groups[1].Value;
                                 a.content = groups[2].Value;
                                 a.sender = name;
-                                string ms=JsonSerializer.Serialize<message>(a);
+                                string ms=JsonSerializer.Serialize<message>(a)+"\n";
                                 stream.Write(Encoding.UTF8.GetBytes("send " + ms));
                             }
                             else
@@ -173,7 +173,7 @@ namespace TcpClientApp
                             groups = Regex.Match(input, GetStory_pattern).Groups;
                             if (groups.Count!=1)
                             {
-                                stream.Write(Encoding.UTF8.GetBytes("GetStory "+ groups[0].Value));
+                                stream.Write(Encoding.UTF8.GetBytes("GetStory "+ groups[0].Value + "\n"));
                             }
                             else
                             {
@@ -184,7 +184,7 @@ namespace TcpClientApp
                         case "GetMailbox":
                             if (input.Length != 0)
                             {
-                                stream.Write(Encoding.UTF8.GetBytes("GetMailbox " + name));
+                                stream.Write(Encoding.UTF8.GetBytes("GetMailbox " + name + "\n"));
                             }
                             else
                             {

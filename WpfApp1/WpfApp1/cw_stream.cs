@@ -10,6 +10,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 using System.Windows.Threading;
 
 namespace messanger_ui
@@ -73,14 +74,15 @@ namespace messanger_ui
                             string command_pattern = @"(^[A-z0-9]+ )";
                             string command = Regex.Match(mail.content, command_pattern).Value.Trim();
                             GroupCollection groups;
-                            //любые команды от сервера
+
+
+                            //любые команды от   !!!сервера!!!
                             switch (command)
                             {
 
 
                                 case "alive":
-
-                                    stream.Write(Encoding.UTF8.GetBytes("alive"), 0, Encoding.UTF8.GetBytes("alive").Length);
+                                    stream.Write(Encoding.UTF8.GetBytes("alive"+"\n"), 0, Encoding.UTF8.GetBytes("alive"+"\n").Length);
                                     break;
                                 case "is_registred":
                                     #region
@@ -108,6 +110,13 @@ namespace messanger_ui
                                                         textBlock.Text = ans_name;
                                                         _user_list.Items.Add(textBlock);
                                                     });
+                                                    //проверка на онлайн
+                                                    Message message = new Message();
+                                                    message.sender = FonWindow.user_name;
+                                                    message.reciever = "@server";
+                                                    message.content = ans_name;
+                                                    string jMessage = "is_online " + JsonConvert.SerializeObject(message);
+                                                    FonWindow.stream.Write(Encoding.UTF8.GetBytes(jMessage + "\n"), 0, Encoding.UTF8.GetBytes(jMessage + "\n").Length);
                                                 }
                                             }
                                         }
@@ -124,6 +133,56 @@ namespace messanger_ui
                                     }
                                     #endregion
                                     break;
+                                case "is_online":
+                                    #region
+                                    string is_online_pattern = @" ([a-z0-9]+) (.+)";
+                                    groups = Regex.Match(mail.content, is_online_pattern).Groups;
+                                    if (groups.Count == 3)
+                                    {
+                                        string ans = groups[1].Value;
+                                        string ans_name = groups[2].Value;
+                                        if (saved_users_list.Contains(ans_name))
+                                        {
+                                            if (ans == "yes")
+                                            {
+                                                lock (saved_list_locker)
+                                                {
+
+                                                    window.Dispatcher.Invoke(() =>
+                                                    {
+                                                        ListBox _user_list = (ListBox)window.FindName("user_list");
+                                                        foreach (TextBlock block in _user_list.Items)
+                                                        {
+                                                            if (block.Text == ans_name)
+                                                            {
+                                                                block.Foreground = Brushes.Green;
+                                                            }
+                                                        }
+                                                    });
+                                                }
+                                            }
+                                            else
+                                            {
+                                                lock (saved_list_locker)
+                                                {
+
+                                                    window.Dispatcher.Invoke(() =>
+                                                    {
+                                                        ListBox _user_list = (ListBox)window.FindName("user_list");
+                                                        foreach (TextBlock block in _user_list.Items)
+                                                        {
+                                                            if (block.Text == ans_name)
+                                                            {
+                                                                block.Foreground = Brushes.Red;
+                                                            }
+                                                        }
+                                                    });
+                                                }
+                                            }
+                                        }
+                                    }
+                                    break;
+                                #endregion
                                 default:
                                     break;
                             }
@@ -147,6 +206,13 @@ namespace messanger_ui
                                     textBlock.Text = mail.sender;
                                     _user_list.Items.Add(textBlock);
                                 });
+                                //проверка на онлайн
+                                Message message = new Message();
+                                message.sender = FonWindow.user_name;
+                                message.reciever = "@server";
+                                message.content = mail.sender;
+                                string jMessage = "is_online " + JsonConvert.SerializeObject(message);
+                                FonWindow.stream.Write(Encoding.UTF8.GetBytes(jMessage + "\n"), 0, Encoding.UTF8.GetBytes(jMessage + "\n").Length);
                             }
                             if (saved_users_list[user_id] == mail.sender)
                             {
@@ -157,6 +223,13 @@ namespace messanger_ui
                                     textBlock.Text = mail.sender + ": " + mail.content;
                                     _messages_list.Items.Add(textBlock);
                                 });
+                                //проверка на онлайн
+                                Message message = new Message();
+                                message.sender = FonWindow.user_name;
+                                message.reciever = "@server";
+                                message.content = mail.sender;
+                                string jMessage = "is_online " + JsonConvert.SerializeObject(message);
+                                FonWindow.stream.Write(Encoding.UTF8.GetBytes(jMessage + "\n"), 0, Encoding.UTF8.GetBytes(jMessage + "\n").Length);
                             }
                         }
                     }
