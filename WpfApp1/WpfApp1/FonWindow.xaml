@@ -11,26 +11,21 @@
     <Grid>
         <Image HorizontalAlignment="Left" Height="1080" Margin="-10,9,0,-38.6" VerticalAlignment="Top" Width="1920" OpacityMask="#FF4040D0" Source="фон1.png"/>
         <Image x:Name="logo" HorizontalAlignment="Left" Height="299" Margin="600,153,0,0" VerticalAlignment="Top" Width="739" Source="лого2.png" Stretch="Fill" OpacityMask="Black"/>
-
+        
         <TextBox x:Name="loginAvto" HorizontalAlignment="Left" Height="100" Margin="500,496,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="920"/>
 
         <PasswordBox x:Name="ParolAvto" HorizontalAlignment="Left" Height="100" Margin="500,650,0,0" VerticalAlignment="Top" Width="920"/>
-
-        <Button x:Name="butLogin" Content="ВОЙТИ" HorizontalAlignment="Left" Height="75" Margin="682,777,0,0" VerticalAlignment="Top" Width="538" Click="ButLogin_Click" FontSize="18" FontWeight="Bold"/>
-
+        
+        <Button x:Name="butLogin" Content="ВОЙТИ" HorizontalAlignment="Left" Height="75" Margin="680,781,0,0" VerticalAlignment="Top" Width="565" Click="ButLogin_Click" FontSize="18" FontWeight="Bold"/>
+        
         <TextBox x:Name="LoginRegist" HorizontalAlignment="Left" Height="100" Margin="500,352,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="920" Visibility="Collapsed"/>
         <PasswordBox x:Name="ParolRegist" HorizontalAlignment="Left" Height="100" Margin="500,510,0,0"  VerticalAlignment="Top" Width="920" Visibility="Collapsed"/>
-        <Button x:Name="butAfterRegist" Content="ВОЙТИ" HorizontalAlignment="Left" Height="75" Margin="1007,777,0,0" VerticalAlignment="Top" Width="413" Click="Button_Click1" FontWeight="Bold" FontSize="18" Visibility="Collapsed" />
+        <Button x:Name="butAfterRegist" Content="ВОЙТИ" HorizontalAlignment="Left" Height="60" Margin="680,690,0,0" VerticalAlignment="Top" Width="565" Click="Button_Click1" FontWeight="Bold" FontSize="18" Visibility="Collapsed" />
 
-        <Button x:Name="ButRegist" Content="РЕГИСТРАЦИЯ" HorizontalAlignment="Left" Height="57" Margin="726,937,0,0" VerticalAlignment="Top" Width="452" Click="ButRegist_Click" FontWeight="Bold"/>
-
+        <Button x:Name="ButRegist" Content="РЕГИСТРАЦИЯ" HorizontalAlignment="Left" Height="57" Margin="747,938,0,0" VerticalAlignment="Top" Width="452" Click="ButRegist_Click" FontWeight="Bold"/>
+        
         <TextBlock x:Name="Podskazka1" HorizontalAlignment="Left" Height="28" Margin="500,319,0,0" TextWrapping="Wrap" Text="fsadfasdf" VerticalAlignment="Top" Width="333" Visibility="Collapsed"/>
         <TextBlock x:Name="Podskazka2" HorizontalAlignment="Left" Height="28" Margin="500,477,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="333" Visibility="Collapsed"/>
-        <TextBlock x:Name="PodskazkaLogin1" HorizontalAlignment="Left" Height="20" Margin="500,457,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="333"/>
-        <TextBlock x:Name="PodskazkaLogin2" HorizontalAlignment="Left" Height="20" Margin="500,610,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="333"/>
-        <PasswordBox x:Name="ParolRegist_Copy" HorizontalAlignment="Left" Height="100" Margin="500,650,0,0"  VerticalAlignment="Top" Width="920" Visibility="Collapsed"/>
-        <Button x:Name="butReigstrBack" Content="НАЗАД" HorizontalAlignment="Left" Height="75" Margin="500,777,0,0" VerticalAlignment="Top" Width="392" Click="butReigstrBack_Click" FontSize="18" FontWeight="Bold" Visibility="Collapsed"/>
-        <TextBlock x:Name="Podskazka3" HorizontalAlignment="Left" Height="28" Margin="500,617,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="333" Visibility="Collapsed"/>
 
 
     </Grid>

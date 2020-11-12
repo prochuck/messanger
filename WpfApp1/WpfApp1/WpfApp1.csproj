@@ -75,10 +75,13 @@
     </Compile>
     <Compile Include="crypt.cs" />
     <Compile Include="cw_stream.cs" />
+
     <Compile Include="FonChat.xaml.cs">
       <DependentUpon>FonChat.xaml</DependentUpon>
     </Compile>
+
     <Compile Include="Data_wr.cs" />
+
     <Compile Include="FonWindow.xaml.cs">
       <DependentUpon>FonWindow.xaml</DependentUpon>
     </Compile>
