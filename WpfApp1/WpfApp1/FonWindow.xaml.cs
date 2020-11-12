@@ -60,8 +60,8 @@ namespace messanger_ui
         }
         private void ButLogin_Click(object sender, RoutedEventArgs e)
         {
-            Podskazka1.Text = "";
-            Podskazka2.Text = "";
+            PodskazkaLogin1.Text = "";
+            PodskazkaLogin2.Text = "";
             TcpClient client = new TcpClient();  // подключаемся к серверу
             try
             {
@@ -71,6 +71,7 @@ namespace messanger_ui
 
                 string sLogin = loginAvto.Text;
                 string sParol = ParolAvto.Password;
+               
                 string sServer_response;
 
                 byte[] outLoginR = System.Text.Encoding.UTF8.GetBytes(sLogin);
@@ -84,46 +85,49 @@ namespace messanger_ui
 
                 if (!String.IsNullOrEmpty(sLogin))   // проверяем заполнение логина
                 {
-                    Podskazka1.Visibility = Visibility.Collapsed;
+                    PodskazkaLogin1.Visibility = Visibility.Collapsed;
                     stream.Write(outLoginR, 0, outLoginR.Length);        // отправляем логин на сервер
                     sServer_response = sRead_stream(stream); // получаем ответ о возможности такого логина
 
 
                     if (sServer_response != "доступен")
                     {
-                        Podskazka1.Text = sServer_response;
-                        Podskazka1.Foreground = Brushes.Red;
-                        Podskazka1.Visibility = Visibility.Visible;
+                        PodskazkaLogin1.Text = sServer_response;
+                        PodskazkaLogin1.Foreground = Brushes.Red;
+                        PodskazkaLogin1.Visibility = Visibility.Visible;
                         throw new Exception(sServer_response);
                     }
 
                 }
                 else
                 {
-                    Podskazka1.Text = "Введите логин";
-                    Podskazka1.Foreground = Brushes.Red;
-                    Podskazka1.Visibility = Visibility.Visible;
+                    PodskazkaLogin1.Text = "Введите логин";
+                    PodskazkaLogin1.Foreground = Brushes.Red;
+                    PodskazkaLogin1.Visibility = Visibility.Visible;
                     throw new Exception("нет логина");
                 }
                 if (!String.IsNullOrEmpty(sParol))   // проверяем заполнение пароля
                 {
-                    Podskazka2.Visibility = Visibility.Collapsed;
-                    stream.Write(outParolR, 0, outParolR.Length);    // отправляем пароль на сервер
-                    byte[] OtvetPR = new byte[256];
-                    sServer_response = sRead_stream(stream); // получаем ответ о возможности такого пароля
-                    if (sServer_response != "авторизирован") // если пароль проходит открываем окно чата
-                    {
-                        Podskazka2.Text = sServer_response;
-                        Podskazka2.Foreground = Brushes.Red;
-                        Podskazka2.Visibility = Visibility.Visible;
+
+                    PodskazkaLogin2.Visibility = Visibility.Collapsed;
+                     stream.Write(outParolR, 0, outParolR.Length);    // отправляем пароль на сервер
+                     byte[] OtvetPR = new byte[256];
+                     sServer_response = sRead_stream(stream); // получаем ответ о возможности такого пароля
+                     if (sServer_response != "авторизирован") // если пароль проходит открываем окно чата
+                     {
+                        PodskazkaLogin2.Text = sServer_response;
+                        PodskazkaLogin2.Foreground = Brushes.Red;
+                        PodskazkaLogin2.Visibility = Visibility.Visible;
                         throw new Exception(sServer_response);
-                    }
+                     }
+                       
+                  
                 }
                 else
                 {
-                    Podskazka2.Text = "введите пароль";
-                    Podskazka2.Foreground = Brushes.Red;
-                    Podskazka2.Visibility = Visibility.Visible;
+                    PodskazkaLogin2.Text = "введите пароль";
+                    PodskazkaLogin2.Foreground = Brushes.Red;
+                    PodskazkaLogin2.Visibility = Visibility.Visible;
                     throw new Exception("нет пароля");
                 }
 
@@ -231,6 +235,7 @@ namespace messanger_ui
 
                 string sLogin = LoginRegist.Text;
                 string sParol = ParolRegist.Password;
+                 string sParolP = ParolRegist_Copy.Password;
                 string sServer_response;
 
                 byte[] outLoginR = System.Text.Encoding.UTF8.GetBytes(sLogin);
@@ -267,18 +272,39 @@ namespace messanger_ui
                 }
                 if (!String.IsNullOrEmpty(sParol))   // проверяем заполнение пароля
                 {
-                    Podskazka2.Visibility = Visibility.Collapsed;
-                    stream.Write(outParolR, 0, outParolR.Length);    // отправляем пароль на сервер
-                    byte[] OtvetPR = new byte[256];
-                    sServer_response = sRead_stream(stream); // получаем ответ о возможности такого пароля
-                    if (sServer_response != "пароль принят") // если пароль проходит открываем окно чата
+                    if (!String.IsNullOrEmpty(sParolP))
                     {
-                        Podskazka2.Text = sServer_response;
-                        Podskazka2.Foreground = Brushes.Red;
-                        Podskazka2.Visibility = Visibility.Visible;
-                        throw new Exception(sServer_response);
+                        if (sParol == sParolP)
+                        {
+                            Podskazka2.Visibility = Visibility.Collapsed;
+                            Podskazka3.Visibility = Visibility.Collapsed;
+                            stream.Write(outParolR, 0, outParolR.Length);    // отправляем пароль на сервер
+                            byte[] OtvetPR = new byte[256];
+                            sServer_response = sRead_stream(stream); // получаем ответ о возможности такого пароля
+                            if (sServer_response != "пароль принят") // если пароль проходит открываем окно чата
+                            {
+                                Podskazka2.Text = sServer_response;
+                                Podskazka2.Foreground = Brushes.Red;
+                                Podskazka2.Visibility = Visibility.Visible;
+                                throw new Exception(sServer_response);
+                            }
+                        }
+                        else
+                        {
+                            Podskazka3.Text = "пароли должны совпадать";
+                            Podskazka3.Foreground = Brushes.Red;
+                            Podskazka3.Visibility = Visibility.Visible;
+                            throw new Exception("нет пароля");
+                        }
                     }
-                }
+                    else
+                    {
+                        Podskazka3.Text = "введите пароль повторно";
+                        Podskazka3.Foreground = Brushes.Red;
+                        Podskazka3.Visibility = Visibility.Visible;
+                        throw new Exception("нет пароля");
+                    }
+                    }
                 else
                 {
                     Podskazka2.Text = "введите пароль";
@@ -417,6 +443,29 @@ namespace messanger_ui
             ParolRegist.Visibility = Visibility.Visible;
             butAfterRegist.Visibility = Visibility.Visible;
             ButRegist.Visibility = Visibility.Collapsed;
+            ButRegist.Visibility = Visibility.Collapsed;
+            butReigstrBack.Visibility = Visibility.Visible;
+            PodskazkaLogin1.Visibility = Visibility.Collapsed;
+            PodskazkaLogin2.Visibility = Visibility.Collapsed;
+            ParolRegist_Copy.Visibility = Visibility.Visible;
+            
+        }
+
+        private void butReigstrBack_Click(object sender, RoutedEventArgs e)
+		{
+            loginAvto.Visibility = Visibility.Visible;
+            ParolAvto.Visibility = Visibility.Visible;
+            logo.Visibility = Visibility.Visible;
+            butLogin.Visibility = Visibility.Visible;
+            LoginRegist.Visibility = Visibility.Collapsed;
+            ParolRegist.Visibility = Visibility.Collapsed;
+            butAfterRegist.Visibility = Visibility.Collapsed;
+            ButRegist.Visibility = Visibility.Visible;
+            butReigstrBack.Visibility = Visibility.Collapsed;
+            Podskazka1.Visibility = Visibility.Collapsed;
+            Podskazka2.Visibility = Visibility.Collapsed;
+            Podskazka3.Visibility = Visibility.Collapsed;
+            ParolRegist_Copy.Visibility = Visibility.Collapsed;
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
